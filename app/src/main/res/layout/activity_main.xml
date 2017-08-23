@@ -23,8 +23,14 @@
             android:layout_below="@id/textView"
             android:text="Go to audio list!"
             android:onClick="goToAudioList">
-
         </Button>
+        <Button
+            android:id="@+id/playButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toAudioList"
+            android:text="@string/play"
+            android:onClick="playMusic"/>
 
     </RelativeLayout>
 </ScrollView>

@@ -18,23 +18,31 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     public static final String DEBUG_TAG = "Debugujemy";
+    static MediaPlayer mediaPlayer;
 
     static Location activityLocation;
     private TextView textView;
     private LayoutInflater inflater;
+    static List<String> audioNames;
+    private List<String> paths;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.textView);
+        mediaPlayer = new MediaPlayer();
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -71,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         inflater = getLayoutInflater();
+        setAudioNamesList();
 
         //updateSpeed();
                     /*
@@ -86,6 +95,39 @@ public class MainActivity extends AppCompatActivity {
                     */
     }
 
+    public void setAudioNamesList() {
+        audioNames = new LinkedList<String>();
+        paths = new LinkedList<String>();
+
+        ContentResolver cr = this.getContentResolver();
+
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
+        Cursor cur = cr.query(uri, null, selection, null, sortOrder);
+        int count = 0;
+
+        if(cur != null)
+        {
+            count = cur.getCount();
+
+            if(count > 0)
+            {
+                while(cur.moveToNext())
+                {
+                    String data = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                    audioNames.add(data);
+                    String path = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DATA));
+                    paths.add(path);
+                }
+
+            }
+        }
+
+        assert cur != null;
+        cur.close();
+    }
+
     private void updateSpeed() {
         float speed = 0;
         if(activityLocation != null) {
@@ -99,5 +141,45 @@ public class MainActivity extends AppCompatActivity {
     public void goToAudioList(View view) {
         Intent audioListIntent = new Intent(this, AudioListActivity.class);
         startActivity(audioListIntent);
+    }
+
+    public void playMusic(View view) throws IOException {
+        Button button = (Button) view;
+        if(((Button) view).getText().equals(getString(R.string.play))) {
+            playMusic();
+            button.setText(getString(R.string.stop));
+        }
+        else {
+            stopMusic();
+            button.setText(getString(R.string.play));
+        }
+    }
+    public void playMusic() throws IOException  {
+        Random random = new Random(); //AccessFile
+        int playThatOne = random.nextInt(audioNames.size());
+
+        mediaPlayer.setDataSource(paths.get(playThatOne));
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mediaPlayer.start();
+            }
+        });
+        mediaPlayer.prepareAsync();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                try {
+                    stopMusic();
+                    playMusic();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    public void stopMusic() {
+        mediaPlayer.stop();
+        mediaPlayer.reset();
     }
 }

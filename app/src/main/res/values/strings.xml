@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Music And Speed</string>
+    <string name="play">Play that shit!</string>
+    <string name="stop">Stop that shit!</string>
 </resources>
