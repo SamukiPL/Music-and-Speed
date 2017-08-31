@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = (TextView) findViewById(R.id.textView);
+        textView = (TextView) findViewById(R.id.actualSpeed);
         mediaPlayer = new MediaPlayer();
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        updateSpeed();
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(DEBUG_TAG, activityLocation.getAccuracy() + " ");
         }
 
-        textView.setText(speed + "");
+        textView.setText(speed + " km/h");
     }
 
     public void goToAudioList(View view) {
