@@ -11,16 +11,16 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -30,13 +30,19 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     public static final String DEBUG_TAG = "Debugujemy";
-    static MediaPlayer mediaPlayer;
+    private static final long TIME_TO_CHANGE_VOLUME = 5000;
 
+    static MediaPlayer mediaPlayer;
     static Location activityLocation;
+    static boolean over50;
+    static LayoutInflater inflater;
+
     private TextView textView;
-    private LayoutInflater inflater;
     static List<String> audioNames;
     private List<String> paths;
+    private CountDownTimer timer;
+    private boolean isTimerRunning;
+    private long timeLeftToChangeVolume;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        updateSpeed();
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -82,18 +87,28 @@ public class MainActivity extends AppCompatActivity {
         inflater = getLayoutInflater();
         setAudioNamesList();
 
-        //updateSpeed();
-                    /*
-                        final MediaPlayer mediaPlayer = new MediaPlayer();
-                        mediaPlayer.setDataSource(data);
-                        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                                mediaPlayer.start();
-                            }
-                        });
-                        mediaPlayer.prepareAsync();
-                    */
+        updateSpeed();
+        isTimerRunning = false;
+        new CountDownTimer(140000, 1000) {
+
+            @Override
+            public void onTick(long l) {
+                long tymczasem = ((140000 - l)/1000)*5;
+                if(tymczasem > 65)
+                    updateSpeed(45);
+                else
+                    updateSpeed(tymczasem);
+            }
+
+            @Override
+            public void onFinish() {
+                updateSpeed();
+            }
+        }.start();
+
+        Intent startIntent = new Intent(this, MusicService.class);
+        startIntent.setAction("Start");
+        startService(startIntent);
     }
 
     public void setAudioNamesList() {
@@ -136,7 +151,34 @@ public class MainActivity extends AppCompatActivity {
             Log.d(DEBUG_TAG, activityLocation.getAccuracy() + " ");
         }
 
-        textView.setText(speed + " km/h");
+        textView.setText(getString(R.string.current_speed, speed));
+        if(speed < 50)
+            textView.setTextColor(ContextCompat.getColor(this, R.color.green));
+        else if(speed > 50 && speed < 80)
+            textView.setTextColor(ContextCompat.getColor(this, R.color.yellow));
+        else if(speed > 80)
+            textView.setTextColor(ContextCompat.getColor(this, R.color.red));
+    }
+    private void updateSpeed(float speed) {
+        textView.setText(getString(R.string.current_speed, speed));
+        if(speed < 50) {
+            textView.setTextColor(ContextCompat.getColor(this, R.color.green));
+            if(over50) {
+                over50 = false;
+                changeVolumeUp();
+                Log.d(DEBUG_TAG, "TAK TAK");
+            }
+        }
+        else if(speed > 50 && speed < 80) {
+            textView.setTextColor(ContextCompat.getColor(this, R.color.yellow));
+            if(!over50) {
+                over50 = true;
+                changeVolume();
+            }
+        }
+        else if(speed > 80) {
+            textView.setTextColor(ContextCompat.getColor(this, R.color.red));
+        }
     }
 
     public void goToAudioList(View view) {
@@ -182,5 +224,50 @@ public class MainActivity extends AppCompatActivity {
     public void stopMusic() {
         mediaPlayer.stop();
         mediaPlayer.reset();
+    }
+    public void changeVolume() {
+        if(isTimerRunning)
+            timer.cancel();
+        isTimerRunning = true;
+        timer = new CountDownTimer(TIME_TO_CHANGE_VOLUME, 100) {
+            @Override
+            public void onTick(long l) {
+                float lowerVolume = (float)l/(float)TIME_TO_CHANGE_VOLUME;
+                mediaPlayer.setVolume(lowerVolume, lowerVolume);
+                timeLeftToChangeVolume = l;
+            }
+
+            @Override
+            public void onFinish() {
+                try {
+                    stopMusic();
+                    playMusic();
+                    mediaPlayer.setVolume(1,1);
+                } catch (IOException ignored) {
+                }
+            }
+        };
+        timer.start();
+    }
+    public void changeVolumeUp() {
+        final long higherTheVolume = TIME_TO_CHANGE_VOLUME - timeLeftToChangeVolume;
+        if(isTimerRunning)
+            timer.cancel();
+        isTimerRunning = true;
+        timer = new CountDownTimer(higherTheVolume, 100) {
+
+            @Override
+            public void onTick(long l) {
+                float lowerVolume = ((float)TIME_TO_CHANGE_VOLUME - (float)l)/(float)TIME_TO_CHANGE_VOLUME;
+                Log.d(DEBUG_TAG, lowerVolume + "");
+                mediaPlayer.setVolume(lowerVolume, lowerVolume);
+            }
+
+            @Override
+            public void onFinish() {
+                mediaPlayer.setVolume(1, 1);
+            }
+        };
+        timer.start();
     }
 }

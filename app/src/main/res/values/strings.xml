@@ -3,4 +3,5 @@
     <string name="play">Play that shit!</string>
     <string name="stop">Stop that shit!</string>
     <string name="speed_not_available">Speed not available</string>
+    <string name="current_speed">%1$.2f km/h</string>
 </resources>
