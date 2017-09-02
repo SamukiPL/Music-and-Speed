@@ -6,20 +6,30 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import java.io.IOException;
+import java.util.List;
+
+import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 
 public class MusicService extends Service {
     private final IBinder mBinder = new LocalBinder();
     private final int notifyID = 101;
+
+    static MediaPlayer mediaPlayer;
+    static Location activityLocation;
+    static boolean over50;
+    static List<String> audioNames;
+    static List<String> paths;
+    static MusicPlayerManager playerManager;
 
     NotificationManager notificationManager;
     NotificationCompat.Builder notificationBuilder;
@@ -51,21 +61,8 @@ public class MusicService extends Service {
 
                 notificationBuilder = new NotificationCompat.Builder(this)
                         .setContentText("Music")
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.default_album_cover)
                         .setOngoing(true);
-                /*
-                //NOTIFICATION INTENT
-                Intent notificationIntent = new Intent(this, MainActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-                notificationBuilder.setContentIntent(pendingIntent)
-                        .setContentTitle("Tak")
-                        .setTicker("Tak")
-                        .addAction(android.R.drawable.ic_media_previous, "Previous", pPreviousIntent)
-                        .addAction(android.R.drawable.ic_media_pause, "Pause", pPauseIntent)
-                        .addAction(android.R.drawable.ic_media_next, "Next", pNextIntent);
-                notification = notificationBuilder.build();
-                */
                 //NOTIFICATION INTENT
                 Intent notificationIntent = new Intent(this, MainActivity.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -83,7 +80,7 @@ public class MusicService extends Service {
                 PendingIntent pNextIntent = PendingIntent.getService(this, 0, nextIntent, 0);
                 //CLOSE INTENT
                 Intent closeIntent = new Intent(this, MusicService.class);
-                closeIntent.setAction("Close");
+                closeIntent.setAction("Stop");
                 PendingIntent pCloseIntent = PendingIntent.getService(this, 0, closeIntent, 0);
 
                 remoteViews.setOnClickPendingIntent(R.id.previous, pPreviousIntent);
@@ -137,16 +134,15 @@ public class MusicService extends Service {
 
                     notificationManager.notify(notifyID, notification);
                     next();
-                } else if (intent.getAction().equals("Close")) {
+                } else if (intent.getAction().equals("Stop")) {
+                    stop();
                     stopForeground(true);
                     stopSelf();
                 }
-
+                Log.d(DEBUG_TAG, String.valueOf(playerManager.isPlaying));
         }
 
-        } catch (NullPointerException e) {
-            Log.d(MainActivity.DEBUG_TAG, "TAK I NIE");
-        }
+        } catch (NullPointerException ignored) {}
         return START_STICKY;
     }
 
@@ -160,12 +156,77 @@ public class MusicService extends Service {
         super.onDestroy();
     }
 
-    private void start() {}
-    private void restart() {}
-    private void previous() {}
-    private void pause() {}
-    private void next() {}
-    public class LocalBinder extends Binder {
+    private void start() {
+        playerManager = new MusicPlayerManager(context);
+        try {
+            playerManager.playMusic();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void restart() {
+        playerManager.restartMusic();
+    }
+
+    private void previous() {
+        try {
+            boolean tmpIsPlaying = playerManager.isPlaying;
+            playerManager.stopMusic();//This action gonna change the value of isPlaying!
+            if(tmpIsPlaying)
+                playerManager.playMusic();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void pause() {
+        playerManager.pauseMusic();
+    }
+
+    private void next() {
+        try {
+            boolean tmpIsPlaying = playerManager.isPlaying;
+            playerManager.stopMusic();//This action gonna change the value of isPlaying!
+            if(tmpIsPlaying)
+                playerManager.playMusic();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stop() {
+        playerManager.stopMusic();
+    }
+
+    public static void updateSpeed() {
+        float speed = 0;
+        if(activityLocation != null) {
+            speed = activityLocation.getSpeed() * 3.6f;
+            Log.d(DEBUG_TAG, activityLocation.getAccuracy() + " ");
+        }
+
+    }
+
+    private static void updateSpeed(float speed) {
+        if(speed < 50) {
+            if(over50) {
+                over50 = false;
+                playerManager.changeVolumeUp();
+                Log.d(DEBUG_TAG, "TAK TAK");
+            }
+        }
+        else if(speed > 50 && speed < 80) {
+            if(!over50) {
+                over50 = true;
+                playerManager.changeVolumeDown();
+            }
+        }
+        else if(speed > 80) {
+        }
+    }
+
+    class LocalBinder extends Binder {
         MusicService getService() {
             return MusicService.this;
         }

@@ -1,9 +1,11 @@
 package me.samuki.musicandspeed;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
@@ -12,6 +14,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.CountDownTimer;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -28,21 +31,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import static me.samuki.musicandspeed.MusicService.audioNames;
+import static me.samuki.musicandspeed.MusicService.paths;
+import static me.samuki.musicandspeed.MusicService.mediaPlayer;
+
 public class MainActivity extends AppCompatActivity {
     public static final String DEBUG_TAG = "Debugujemy";
-    private static final long TIME_TO_CHANGE_VOLUME = 5000;
 
-    static MediaPlayer mediaPlayer;
-    static Location activityLocation;
-    static boolean over50;
     static LayoutInflater inflater;
 
     private TextView textView;
-    static List<String> audioNames;
-    private List<String> paths;
-    private CountDownTimer timer;
-    private boolean isTimerRunning;
-    private long timeLeftToChangeVolume;
+    private MusicService musicService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
                 if(location != null) {
-                    MainActivity.activityLocation = new Location(location);
-                    updateSpeed();
+                    MusicService.activityLocation = new Location(location);
+                    MusicService.updateSpeed();
                 }
             }
 
@@ -84,11 +84,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
         inflater = getLayoutInflater();
         setAudioNamesList();
-
-        updateSpeed();
-        isTimerRunning = false;
+/*
         new CountDownTimer(140000, 1000) {
 
             @Override
@@ -105,10 +104,43 @@ public class MainActivity extends AppCompatActivity {
                 updateSpeed();
             }
         }.start();
+*/
+        Intent bindIntent = new Intent(this, MusicService.class);
+        bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
 
+    @Override
+    protected void onDestroy() {
+        if(musicService != null)
+            unbindService(serviceConnection);
+        super.onDestroy();
+    }
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            MusicService.LocalBinder binder = (MusicService.LocalBinder) iBinder;
+            musicService = binder.getService();
+            //Tutaj musi być coś co ma się zrobić jeśli w tle cały czas działałą apka,
+            // w sensie jakaś fajna metoda
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
+
+    private void startMusicService() {
         Intent startIntent = new Intent(this, MusicService.class);
         startIntent.setAction("Start");
         startService(startIntent);
+    }
+
+    private void stopMusicService() {
+        Intent stopIntent = new Intent(this, MusicService.class);
+        stopIntent.setAction("Stop");
+        startService(stopIntent);
     }
 
     public void setAudioNamesList() {
@@ -144,130 +176,21 @@ public class MainActivity extends AppCompatActivity {
         cur.close();
     }
 
-    private void updateSpeed() {
-        float speed = 0;
-        if(activityLocation != null) {
-            speed = activityLocation.getSpeed() * 3.6f;
-            Log.d(DEBUG_TAG, activityLocation.getAccuracy() + " ");
-        }
-
-        textView.setText(getString(R.string.current_speed, speed));
-        if(speed < 50)
-            textView.setTextColor(ContextCompat.getColor(this, R.color.green));
-        else if(speed > 50 && speed < 80)
-            textView.setTextColor(ContextCompat.getColor(this, R.color.yellow));
-        else if(speed > 80)
-            textView.setTextColor(ContextCompat.getColor(this, R.color.red));
-    }
-    private void updateSpeed(float speed) {
-        textView.setText(getString(R.string.current_speed, speed));
-        if(speed < 50) {
-            textView.setTextColor(ContextCompat.getColor(this, R.color.green));
-            if(over50) {
-                over50 = false;
-                changeVolumeUp();
-                Log.d(DEBUG_TAG, "TAK TAK");
-            }
-        }
-        else if(speed > 50 && speed < 80) {
-            textView.setTextColor(ContextCompat.getColor(this, R.color.yellow));
-            if(!over50) {
-                over50 = true;
-                changeVolume();
-            }
-        }
-        else if(speed > 80) {
-            textView.setTextColor(ContextCompat.getColor(this, R.color.red));
-        }
-    }
-
     public void goToAudioList(View view) {
         Intent audioListIntent = new Intent(this, AudioListActivity.class);
         startActivity(audioListIntent);
     }
 
-    public void playMusic(View view) throws IOException {
+    public void playMusic(View view) {
         Button button = (Button) view;
         if(((Button) view).getText().equals(getString(R.string.play))) {
-            playMusic();
+            startMusicService();
             button.setText(getString(R.string.stop));
         }
         else {
-            stopMusic();
+            stopMusicService();
             button.setText(getString(R.string.play));
         }
-    }
-    public void playMusic() throws IOException  {
-        Random random = new Random(); //AccessFile
-        int playThatOne = random.nextInt(audioNames.size());
 
-        mediaPlayer.setDataSource(paths.get(playThatOne));
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mediaPlayer.start();
-            }
-        });
-        mediaPlayer.prepareAsync();
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                try {
-                    stopMusic();
-                    playMusic();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-    public void stopMusic() {
-        mediaPlayer.stop();
-        mediaPlayer.reset();
-    }
-    public void changeVolume() {
-        if(isTimerRunning)
-            timer.cancel();
-        isTimerRunning = true;
-        timer = new CountDownTimer(TIME_TO_CHANGE_VOLUME, 100) {
-            @Override
-            public void onTick(long l) {
-                float lowerVolume = (float)l/(float)TIME_TO_CHANGE_VOLUME;
-                mediaPlayer.setVolume(lowerVolume, lowerVolume);
-                timeLeftToChangeVolume = l;
-            }
-
-            @Override
-            public void onFinish() {
-                try {
-                    stopMusic();
-                    playMusic();
-                    mediaPlayer.setVolume(1,1);
-                } catch (IOException ignored) {
-                }
-            }
-        };
-        timer.start();
-    }
-    public void changeVolumeUp() {
-        final long higherTheVolume = TIME_TO_CHANGE_VOLUME - timeLeftToChangeVolume;
-        if(isTimerRunning)
-            timer.cancel();
-        isTimerRunning = true;
-        timer = new CountDownTimer(higherTheVolume, 100) {
-
-            @Override
-            public void onTick(long l) {
-                float lowerVolume = ((float)TIME_TO_CHANGE_VOLUME - (float)l)/(float)TIME_TO_CHANGE_VOLUME;
-                Log.d(DEBUG_TAG, lowerVolume + "");
-                mediaPlayer.setVolume(lowerVolume, lowerVolume);
-            }
-
-            @Override
-            public void onFinish() {
-                mediaPlayer.setVolume(1, 1);
-            }
-        };
-        timer.start();
     }
 }

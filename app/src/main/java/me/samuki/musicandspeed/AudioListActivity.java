@@ -12,8 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import static me.samuki.musicandspeed.MusicService.audioNames;
+
 public class AudioListActivity extends Activity {
     private LayoutInflater inflater;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,10 +24,10 @@ public class AudioListActivity extends Activity {
         inflater = getLayoutInflater();
 
         LinearLayout container = findViewById(R.id.musicContainer);
-        for(int i = 0; i < MainActivity.audioNames.size(); i++) {
+        for(int i = 0; i < audioNames.size(); i++) {
             RelativeLayout musicRow = (RelativeLayout) inflater.inflate(R.layout.music_row, null);
             TextView name = musicRow.findViewById(R.id.musicRow_name);
-            name.setText(MainActivity.audioNames.get(i));
+            name.setText(audioNames.get(i));
             container.addView(musicRow);
         }
     }
