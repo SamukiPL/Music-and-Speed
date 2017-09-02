@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 
 import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
@@ -15,17 +16,21 @@ import static me.samuki.musicandspeed.MusicService.paths;
 
 class MusicPlayerManager {
     private static final long TIME_TO_CHANGE_VOLUME = 5000;
+    private static final int rememberThatMany = 50;
+    private static final int identificationNumber = -1;
 
     private Context context;
     private CountDownTimer timer;
     private boolean isTimerRunning;
     private long timeLeftToChangeVolume;
+    private int lastMusicPlayed[];
 
     boolean isPlaying;
 
     MusicPlayerManager(Context context) {
         this.context = context;
         isTimerRunning = false;
+        setLastMusicPlayed();
     }
 
     void playMusic() throws IOException  {
@@ -52,11 +57,23 @@ class MusicPlayerManager {
             }
         });
         isPlaying = true;
+        addToLastMusicPlayed(playThatOne);
     }
 
     void restartMusic() {
         mediaPlayer.start();
         isPlaying = true;
+    }
+
+    void previousMusic() {
+        try {
+            boolean tmpIsPlaying = isPlaying;
+            stopMusic();//This action gonna change the value of isPlaying!
+            if(tmpIsPlaying)
+                playMusic();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     void pauseMusic() {
@@ -115,6 +132,26 @@ class MusicPlayerManager {
             }
         };
         timer.start();
+    }
+
+    private void setLastMusicPlayed() {
+        lastMusicPlayed = new int[rememberThatMany];
+        Arrays.fill(lastMusicPlayed, identificationNumber);
+    }
+
+    private void addToLastMusicPlayed(int number) {
+        for (int i = 0; i < rememberThatMany; i++) {
+            Log.d(DEBUG_TAG, String.valueOf(number));
+            if(lastMusicPlayed[i] == identificationNumber) {
+                lastMusicPlayed[i] = number;
+                break;
+            }
+            else {
+                int tmp = number;
+                number = lastMusicPlayed[i];
+                lastMusicPlayed[i] = tmp;
+            }
+        }
     }
 
 }
