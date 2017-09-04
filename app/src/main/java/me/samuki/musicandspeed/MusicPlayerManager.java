@@ -1,7 +1,6 @@
 package me.samuki.musicandspeed;
 
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.Log;
 
@@ -24,8 +23,14 @@ class MusicPlayerManager {
     private boolean isTimerRunning;
     private long timeLeftToChangeVolume;
     private int lastMusicPlayed[];
+    private int remembered;
+    private int actualMusicPlaying;
 
     boolean isPlaying;
+
+    int getActualMusicPlaying() {
+        return actualMusicPlaying;
+    }
 
     MusicPlayerManager(Context context) {
         this.context = context;
@@ -38,31 +43,32 @@ class MusicPlayerManager {
         int playThatOne = random.nextInt(audioNames.size());
 
         mediaPlayer.setDataSource(paths.get(playThatOne));
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mediaPlayer.start();
-            }
-        });
         mediaPlayer.prepareAsync();
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                try {
-                    stopMusic();
-                    playMusic();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
         isPlaying = true;
         addToLastMusicPlayed(playThatOne);
+        actualMusicPlaying = playThatOne;
+    }
+
+    void playMusic(int whichMusic) throws IOException {
+        mediaPlayer.setDataSource(paths.get(whichMusic));
+        mediaPlayer.prepareAsync();
+        isPlaying = true;
+    }
+
+    void playLastMusic() throws IOException {
+        actualMusicPlaying = getLastOnePlayed();
+        mediaPlayer.setDataSource(paths.get(actualMusicPlaying));
+        mediaPlayer.prepareAsync();
+        isPlaying = true;
     }
 
     void restartMusic() {
-        mediaPlayer.start();
-        isPlaying = true;
+        try {
+            playMusic(actualMusicPlaying);
+            isPlaying = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     void previousMusic() {
@@ -70,7 +76,9 @@ class MusicPlayerManager {
             boolean tmpIsPlaying = isPlaying;
             stopMusic();//This action gonna change the value of isPlaying!
             if(tmpIsPlaying)
-                playMusic();
+                playLastMusic();
+            else
+                actualMusicPlaying = getLastOnePlayed();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,9 +149,10 @@ class MusicPlayerManager {
 
     private void addToLastMusicPlayed(int number) {
         for (int i = 0; i < rememberThatMany; i++) {
-            Log.d(DEBUG_TAG, String.valueOf(number));
+            Log.d(DEBUG_TAG, number+"");
             if(lastMusicPlayed[i] == identificationNumber) {
                 lastMusicPlayed[i] = number;
+                remembered = i;
                 break;
             }
             else {
@@ -152,6 +161,21 @@ class MusicPlayerManager {
                 lastMusicPlayed[i] = tmp;
             }
         }
+    }
+
+    private int getLastOnePlayed() {
+        int number = lastMusicPlayed[remembered];
+        if(remembered != 0) {
+            lastMusicPlayed[remembered] = identificationNumber;
+            for (int i = remembered; i > 0; i--) {
+                    int tmp = number;
+                    number = lastMusicPlayed[i - 1];
+                    lastMusicPlayed[i - 1] = tmp;
+            }
+        }
+        remembered--;
+        Log.d(DEBUG_TAG, number + "");
+        return number;
     }
 
 }

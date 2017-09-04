@@ -1,19 +1,26 @@
 package me.samuki.musicandspeed;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,8 +44,16 @@ public class MusicService extends Service {
     RemoteViews remoteViews;
 
     private Context context;
+    private LocationManager locationManager;
+    private TextView speedView, titleView;
 
     public MusicService(){}
+
+    public void setSpeedViewAndTitleView(TextView speedView, TextView titleView) {
+        this.speedView = speedView;
+        this.titleView = titleView;
+        this.speedView.setText("JEJA");
+    }
 
     @Nullable
     @Override
@@ -50,6 +65,58 @@ public class MusicService extends Service {
     public void onCreate() {
         super.onCreate();
         remoteViews = new RemoteViews(getPackageName(), R.layout.music_notification_layout);
+
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mediaPlayer.start();
+            }
+        });
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                Intent nextIntent = new Intent(context, MusicService.class);
+                nextIntent.setAction("Next");
+                startService(nextIntent);
+            }
+        });
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                if(location != null) {
+                    MusicService.activityLocation = new Location(location);
+                    new MusicService().updateSpeed();
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        });
     }
 
     @Override
@@ -87,13 +154,13 @@ public class MusicService extends Service {
                 remoteViews.setOnClickPendingIntent(R.id.next, pNextIntent);
                 remoteViews.setOnClickPendingIntent(R.id.close, pCloseIntent);
                 if(intent.getAction().equals("Start")) {
+                    start();
                     remoteViews.setOnClickPendingIntent(R.id.pause, pPauseIntent);
                     notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews);
 
                     notification = notificationBuilder.build();
                     startForeground(notifyID, notification);
-                    start();
                 } else if (intent.getAction().equals("Restart")) {
                     remoteViews.setOnClickPendingIntent(R.id.pause, pPauseIntent);
                     remoteViews.setImageViewResource(R.id.pause, android.R.drawable.ic_media_pause);
@@ -104,14 +171,12 @@ public class MusicService extends Service {
                     notificationManager.notify(notifyID, notification);
                     restart();
                 } else if (intent.getAction().equals("Previous")) {
-                    remoteViews.setTextViewText(R.id.title, "Previous!");
-                    remoteViews.setImageViewResource(R.id.image, R.mipmap.ic_launcher_round);
+                    previous();
 
                     notification = notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews).build();
 
                     notificationManager.notify(notifyID, notification);
-                    previous();
                 } else if (intent.getAction().equals("Pause")) {
                     //START INTENT
                     Intent restartIntent = new Intent(this, MusicService.class);
@@ -126,14 +191,12 @@ public class MusicService extends Service {
                     notificationManager.notify(notifyID, notification);
                     pause();
                 } else if (intent.getAction().equals("Next")) {
-                    remoteViews.setTextViewText(R.id.title, "Next!");
-                    remoteViews.setImageViewResource(R.id.image, R.mipmap.ic_launcher);
+                    next();
 
                     notification = notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews).build();
 
                     notificationManager.notify(notifyID, notification);
-                    next();
                 } else if (intent.getAction().equals("Stop")) {
                     stop();
                     stopForeground(true);
@@ -163,6 +226,9 @@ public class MusicService extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        int actualMusicPlayed = playerManager.getActualMusicPlaying();
+        remoteViews.setTextViewText(R.id.title, audioNames.get(actualMusicPlayed));
+        titleView.setText(audioNames.get(actualMusicPlayed));
     }
 
     private void restart() {
@@ -171,6 +237,10 @@ public class MusicService extends Service {
 
     private void previous() {
         playerManager.previousMusic();
+        int actualMusicPlayed = playerManager.getActualMusicPlaying();
+        remoteViews.setTextViewText(R.id.title, audioNames.get(actualMusicPlayed));
+        remoteViews.setImageViewResource(R.id.image, R.mipmap.ic_launcher_round);
+        titleView.setText(audioNames.get(actualMusicPlayed));
     }
 
     private void pause() {
@@ -186,22 +256,39 @@ public class MusicService extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        int actualMusicPlayed = playerManager.getActualMusicPlaying();
+        remoteViews.setTextViewText(R.id.title, audioNames.get(actualMusicPlayed));
+        remoteViews.setImageViewResource(R.id.image, R.mipmap.ic_launcher);
+        titleView.setText(audioNames.get(actualMusicPlayed));
     }
 
     private void stop() {
         playerManager.stopMusic();
     }
 
-    public static void updateSpeed() {
+    public void updateSpeed() {
         float speed = 0;
         if(activityLocation != null) {
             speed = activityLocation.getSpeed() * 3.6f;
             Log.d(DEBUG_TAG, activityLocation.getAccuracy() + " ");
+            if(speed < 50) {
+                if(over50) {
+                    over50 = false;
+                    playerManager.changeVolumeUp();
+                }
+            }
+            else if(speed > 50) {
+                if(!over50) {
+                    over50 = true;
+                    playerManager.changeVolumeDown();
+                }
+            }
+            speedView.setText("TAK");
         }
 
     }
 
-    private static void updateSpeed(float speed) {
+    private void updateSpeed(float speed) {
         if(speed < 50) {
             if(over50) {
                 over50 = false;
@@ -209,13 +296,11 @@ public class MusicService extends Service {
                 Log.d(DEBUG_TAG, "TAK TAK");
             }
         }
-        else if(speed > 50 && speed < 80) {
+        else if(speed > 50) {
             if(!over50) {
                 over50 = true;
                 playerManager.changeVolumeDown();
             }
-        }
-        else if(speed > 80) {
         }
     }
 

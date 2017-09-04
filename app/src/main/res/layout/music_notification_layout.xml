@@ -28,7 +28,8 @@
             android:textSize="20dp"
             android:gravity="center"
             android:layout_gravity="center"
-            android:layout_weight="14"/>
+            android:layout_weight="14"
+            android:maxLines="1"/>
         <ImageButton
             android:id="@+id/close"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
