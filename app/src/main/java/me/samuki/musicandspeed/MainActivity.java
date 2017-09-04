@@ -8,16 +8,20 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import static me.samuki.musicandspeed.MusicService.audioNames;
@@ -42,26 +46,21 @@ public class MainActivity extends AppCompatActivity {
 
         inflater = getLayoutInflater();
         setAudioNamesList();
-/*
-        new CountDownTimer(140000, 1000) {
+
+        Intent bindIntent = new Intent(this, MusicService.class);
+        bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        new CountDownTimer(3000, 1000) {
 
             @Override
-            public void onTick(long l) {
-                long tymczasem = ((140000 - l)/1000)*5;
-                if(tymczasem > 65)
-                    updateSpeed(45);
-                else
-                    updateSpeed(tymczasem);
-            }
+            public void onTick(long l) {}
 
             @Override
             public void onFinish() {
-                updateSpeed();
+                Log.d(DEBUG_TAG, musicService+" ");
+                if(musicService != null)
+                    musicService.setSpeedViewAndTitleView(speedView, titleView);
             }
         }.start();
-*/
-        Intent bindIntent = new Intent(this, MusicService.class);
-        bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -76,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MusicService.LocalBinder binder = (MusicService.LocalBinder) iBinder;
             musicService = binder.getService();
+            musicService.setSpeedViewAndTitleView(speedView, titleView);
             //Tutaj musi być coś co ma się zrobić jeśli w tle cały czas działałą apka,
             // w sensie jakaś fajna metoda
         }

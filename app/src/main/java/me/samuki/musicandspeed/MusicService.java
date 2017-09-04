@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -46,13 +47,16 @@ public class MusicService extends Service {
     private Context context;
     private LocationManager locationManager;
     private TextView speedView, titleView;
+    private static MusicService thisService = null;
 
     public MusicService(){}
 
     public void setSpeedViewAndTitleView(TextView speedView, TextView titleView) {
         this.speedView = speedView;
         this.titleView = titleView;
-        this.speedView.setText("JEJA");
+    }
+    public static MusicService getThisService() {
+        return thisService;
     }
 
     @Nullable
@@ -64,6 +68,7 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        thisService = this;
         remoteViews = new RemoteViews(getPackageName(), R.layout.music_notification_layout);
 
         mediaPlayer = new MediaPlayer();
@@ -81,6 +86,7 @@ public class MusicService extends Service {
                 startService(nextIntent);
             }
         });
+        playerManager = new MusicPlayerManager(context);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -116,7 +122,23 @@ public class MusicService extends Service {
             public void onProviderDisabled(String s) {
 
             }
-        });
+        });/*
+        new CountDownTimer(140000, 1000) {
+
+            @Override
+            public void onTick(long l) {
+                long tymczasem = ((140000 - l)/1000)*5;
+                Log.d(DEBUG_TAG, String.valueOf(tymczasem));
+                if(speedView != null)
+                    updateSpeed(tymczasem);
+            }
+
+            @Override
+            public void onFinish() {
+                if(speedView != null)
+                    updateSpeed();
+            }
+        }.start();*/
     }
 
     @Override
@@ -201,10 +223,12 @@ public class MusicService extends Service {
                     stop();
                     stopForeground(true);
                     stopSelf();
+                } else if (intent.getAction().equals("Location")) {
+                    Log.d(DEBUG_TAG, "TAK TAK TAK");
+                    return START_NOT_STICKY;
                 }
                 Log.d(DEBUG_TAG, String.valueOf(playerManager.isPlaying));
-        }
-
+            }
         } catch (NullPointerException ignored) {}
         return START_STICKY;
     }
@@ -220,7 +244,6 @@ public class MusicService extends Service {
     }
 
     private void start() {
-        playerManager = new MusicPlayerManager(context);
         try {
             playerManager.playMusic();
         } catch (IOException e) {
@@ -271,37 +294,41 @@ public class MusicService extends Service {
         if(activityLocation != null) {
             speed = activityLocation.getSpeed() * 3.6f;
             Log.d(DEBUG_TAG, activityLocation.getAccuracy() + " ");
-            if(speed < 50) {
+            if(speed < 40) {
                 if(over50) {
                     over50 = false;
-                    playerManager.changeVolumeUp();
+                    if(playerManager.isPlaying)
+                        playerManager.changeVolumeUp();
                 }
             }
-            else if(speed > 50) {
+            else if(speed > 40) {
                 if(!over50) {
                     over50 = true;
-                    playerManager.changeVolumeDown();
+                    if(playerManager.isPlaying)
+                        playerManager.changeVolumeDown();
                 }
             }
-            speedView.setText("TAK");
         }
-
+        if(speedView != null)
+            speedView.setText(getString(R.string.current_speed, speed));
     }
 
     private void updateSpeed(float speed) {
         if(speed < 50) {
             if(over50) {
                 over50 = false;
-                playerManager.changeVolumeUp();
-                Log.d(DEBUG_TAG, "TAK TAK");
+                if(playerManager.isPlaying)
+                    playerManager.changeVolumeUp();
             }
         }
         else if(speed > 50) {
             if(!over50) {
                 over50 = true;
-                playerManager.changeVolumeDown();
+                if(playerManager.isPlaying)
+                    playerManager.changeVolumeDown();
             }
         }
+        speedView.setText(getString(R.string.current_speed, speed));
     }
 
     class LocalBinder extends Binder {
