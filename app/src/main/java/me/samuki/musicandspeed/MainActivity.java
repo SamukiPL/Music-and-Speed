@@ -1,17 +1,20 @@
 package me.samuki.musicandspeed;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,19 +23,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.LinkedList;
 
 import static me.samuki.musicandspeed.MusicService.audioNames;
 import static me.samuki.musicandspeed.MusicService.paths;
-import static me.samuki.musicandspeed.MusicService.mediaPlayer;
-import static me.samuki.musicandspeed.MusicService.playerManager;
 
 public class MainActivity extends AppCompatActivity {
     public static final String DEBUG_TAG = "Debugujemy";
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     static LayoutInflater inflater;
+    static boolean isPermission;
 
     private TextView speedView, titleView;
     private MusicService musicService;
@@ -45,7 +46,11 @@ public class MainActivity extends AppCompatActivity {
         titleView = (TextView) findViewById(R.id.actualSong);
 
         inflater = getLayoutInflater();
-        setAudioNamesList();
+
+        isPermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        Log.d(DEBUG_TAG, String.valueOf(isPermission) + "TAL");
+        if(isPermission) setAudioNamesList(); else askForPermission();
 
         Intent bindIntent = new Intent(this, MusicService.class);
         bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -57,8 +62,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 Log.d(DEBUG_TAG, musicService+" ");
-                if(musicService != null)
+                if(musicService != null) {
                     musicService.setSpeedViewAndTitleView(speedView, titleView);
+                }
             }
         }.start();
     }
@@ -68,6 +74,31 @@ public class MainActivity extends AppCompatActivity {
         if(musicService != null)
             unbindService(serviceConnection);
         super.onDestroy();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    isPermission = true;
+                    setAudioNamesList();
+                } else {
+                    isPermission = false;
+                } return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void askForPermission() {
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+        } else {
+            isPermission = true;
+        }
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -120,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 while(cur.moveToNext())
                 {
                     String data = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                    Log.d(DEBUG_TAG, data);
                     audioNames.add(data);
                     String path = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DATA));
                     paths.add(path);
