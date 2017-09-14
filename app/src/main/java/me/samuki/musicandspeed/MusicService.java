@@ -45,18 +45,13 @@ public class MusicService extends Service {
     RemoteViews remoteViews;
 
     private Context context;
-    private LocationManager locationManager;
     private TextView speedView, titleView;
-    private static MusicService thisService = null;
 
     public MusicService(){}
 
     public void setSpeedViewAndTitleView(TextView speedView, TextView titleView) {
         this.speedView = speedView;
         this.titleView = titleView;
-    }
-    public static MusicService getThisService() {
-        return thisService;
     }
 
     @Nullable
@@ -68,7 +63,6 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        thisService = this;
         remoteViews = new RemoteViews(getPackageName(), R.layout.music_notification_layout);
 
         mediaPlayer = new MediaPlayer();
@@ -88,7 +82,7 @@ public class MusicService extends Service {
         });
         playerManager = new MusicPlayerManager(context);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -102,25 +96,28 @@ public class MusicService extends Service {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                Log.d(DEBUG_TAG, "Changed");
                 if(location != null) {
                     MusicService.activityLocation = new Location(location);
-                    new MusicService().updateSpeed();
+                    updateSpeed();
+                    Log.d(DEBUG_TAG, "Zmieniono");
                 }
             }
 
             @Override
             public void onStatusChanged(String s, int i, Bundle bundle) {
-
+                Log.d(DEBUG_TAG, s);
             }
 
             @Override
             public void onProviderEnabled(String s) {
+                Log.d(DEBUG_TAG, s);
 
             }
 
             @Override
             public void onProviderDisabled(String s) {
-
+                Log.d(DEBUG_TAG, s);
             }
         });/*
         new CountDownTimer(140000, 1000) {
@@ -176,7 +173,8 @@ public class MusicService extends Service {
                 remoteViews.setOnClickPendingIntent(R.id.next, pNextIntent);
                 remoteViews.setOnClickPendingIntent(R.id.close, pCloseIntent);
                 if(intent.getAction().equals("Start")) {
-                    start();
+                    int trackId = intent.getIntExtra("trackId", -1);
+                    start(trackId);
                     remoteViews.setOnClickPendingIntent(R.id.pause, pPauseIntent);
                     notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews);
@@ -243,13 +241,20 @@ public class MusicService extends Service {
         super.onDestroy();
     }
 
-    private void start() {
+    private void start(int trackId) {
+        int actualMusicPlayed = 0;
         try {
-            playerManager.playMusic();
+            if(trackId >= 0) {
+                playerManager.playMusic(trackId);
+                actualMusicPlayed = trackId;
+            }
+            else {
+                playerManager.playMusic();
+                actualMusicPlayed = playerManager.getActualMusicPlaying();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        int actualMusicPlayed = playerManager.getActualMusicPlaying();
         remoteViews.setTextViewText(R.id.title, audioNames.get(actualMusicPlayed));
         titleView.setText(audioNames.get(actualMusicPlayed));
     }
@@ -309,8 +314,7 @@ public class MusicService extends Service {
                 }
             }
         }
-        if(speedView != null)
-            speedView.setText(getString(R.string.current_speed, speed));
+        speedView.setText(getString(R.string.current_speed, speed));
     }
 
     private void updateSpeed(float speed) {

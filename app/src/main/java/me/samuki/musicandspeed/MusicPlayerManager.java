@@ -50,6 +50,7 @@ class MusicPlayerManager {
     }
 
     void playMusic(int whichMusic) throws IOException {
+        stopMusic();
         mediaPlayer.setDataSource(paths.get(whichMusic));
         mediaPlayer.prepareAsync();
         isPlaying = true;
