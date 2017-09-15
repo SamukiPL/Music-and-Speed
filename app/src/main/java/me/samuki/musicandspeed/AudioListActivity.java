@@ -1,7 +1,6 @@
 package me.samuki.musicandspeed;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -20,11 +19,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.LinkedList;
 
@@ -39,6 +41,7 @@ public class AudioListActivity extends AppCompatActivity {
 
     private LayoutInflater inflater;
     private MusicService musicService;
+    private boolean serviceDisconnected;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,9 +53,13 @@ public class AudioListActivity extends AppCompatActivity {
         isPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         if(isPermission) setAudioNamesList(); else askForPermission();
+    }
 
+    @Override
+    protected void onResume() {
         Intent bindIntent = new Intent(this, MusicService.class);
         bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        super.onResume();
     }
 
     void setToolbar() {
@@ -68,9 +75,39 @@ public class AudioListActivity extends AppCompatActivity {
         });
     }
 
+    void setTitleAndProgressBar() {
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.player_progressBar);
+        MusicService.playerManager.setProgressBar(progressBar);
+        TextView titleView = (TextView) findViewById(R.id.player_trackTitle);
+        titleView.setText(audioNames.get(MusicService.playerManager.getActualMusicPlaying()));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        if(musicService != null)
+            unbindService(serviceConnection);
+        super.onPause();
+    }
+
     @Override
     protected void onDestroy() {
-        if(musicService != null)
+        if(musicService != null && serviceDisconnected)
             unbindService(serviceConnection);
         super.onDestroy();
     }
@@ -78,15 +115,18 @@ public class AudioListActivity extends AppCompatActivity {
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(DEBUG_TAG, MusicService.playerManager.getActualMusicPlaying() + "");
             MusicService.LocalBinder binder = (MusicService.LocalBinder) iBinder;
             musicService = binder.getService();
+            setTitleAndProgressBar();
+            serviceDisconnected = false;
             //Tutaj musi być coś co ma się zrobić jeśli w tle cały czas działałą apka,
             // w sensie jakaś fajna metoda
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
+            serviceDisconnected = true;
         }
     };
 
@@ -171,6 +211,24 @@ public class AudioListActivity extends AppCompatActivity {
     public void goToMainActivity(int trackId) {
         Intent mainIntent = new Intent(this, MainActivity.class);
         mainIntent.putExtra("trackId", trackId);
-        startActivityForResult(mainIntent, 1);
+        startActivity(mainIntent);
+    }
+
+    public void goToMainActivity(View view) {
+        Intent mainIntent = new Intent(this, MainActivity.class);
+        mainIntent.putExtra("trackId", -86);
+        startActivity(mainIntent);
+    }
+
+    public void playMusic(View view) {
+        Toast.makeText(this, "Play!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void previousMusic(View view) {
+        Toast.makeText(this, "Previous!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void nextMusic(View view) {
+        Toast.makeText(this, "Next!", Toast.LENGTH_SHORT).show();
     }
 }

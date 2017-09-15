@@ -122,23 +122,7 @@ public class MusicService extends Service {
             public void onProviderDisabled(String s) {
                 Log.d(DEBUG_TAG, s);
             }
-        });/*
-        new CountDownTimer(140000, 1000) {
-
-            @Override
-            public void onTick(long l) {
-                long tymczasem = ((140000 - l)/1000)*5;
-                Log.d(DEBUG_TAG, String.valueOf(tymczasem));
-                if(speedView != null)
-                    updateSpeed(tymczasem);
-            }
-
-            @Override
-            public void onFinish() {
-                if(speedView != null)
-                    updateSpeed();
-            }
-        }.start();*/
+        });
     }
 
     @Override
@@ -228,7 +212,6 @@ public class MusicService extends Service {
                     Log.d(DEBUG_TAG, "TAK TAK TAK");
                     return START_NOT_STICKY;
                 }
-                Log.d(DEBUG_TAG, String.valueOf(playerManager.isPlaying));
             }
         } catch (NullPointerException ignored) {}
         return START_STICKY;

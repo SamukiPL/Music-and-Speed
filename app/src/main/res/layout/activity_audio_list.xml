@@ -26,7 +26,65 @@
             android:id="@id/player"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:onClick="goToMainActivity">
+                <ProgressBar
+                    android:id="@+id/player_progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"/>
+                <ImageView
+                    android:id="@+id/player_albumCover"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/player_progressBar"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:src="@drawable/default_album_cover"
+                    android:contentDescription="@string/albumCover"/>
+                <TextView
+                    android:id="@+id/player_trackTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/player_progressBar"
+                    android:layout_toRightOf="@id/player_albumCover"
+                    android:layout_toEndOf="@id/player_albumCover"
+                    android:gravity="center"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_toRightOf="@id/player_albumCover"
+                    android:layout_toEndOf="@id/player_albumCover"
+                    android:layout_below="@id/player_trackTitle"
+                    android:weightSum="3">
+
+                        <ImageButton
+                            android:id="@+id/previousButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:src="@android:drawable/ic_media_previous"
+                            android:onClick="previousMusic"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/previous"/>
+                        <ImageButton
+                            android:id="@+id/playButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:src="@android:drawable/ic_media_play"
+                            android:text="@string/play"
+                            android:onClick="playMusic"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/play"/>
+                        <ImageButton
+                            android:id="@+id/nextButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:src="@android:drawable/ic_media_next"
+                            android:onClick="nextMusic"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/next"/>
+                </LinearLayout>
 
         </RelativeLayout>
 </RelativeLayout>

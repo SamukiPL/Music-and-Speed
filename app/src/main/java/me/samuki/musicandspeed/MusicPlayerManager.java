@@ -35,8 +35,24 @@ class MusicPlayerManager {
     int getActualMusicPlaying() {
         return actualMusicPlaying;
     }
-    void setProgressBar(ProgressBar progressBar) {
+    void setProgressBar(final ProgressBar progressBar) {
         this.progressBar = progressBar;
+        if(durationTimer != null) {
+            durationTimer.cancel();
+            currentPosition = mediaPlayer.getCurrentPosition();
+            progressBar.setMax(duration);
+            durationTimer = new CountDownTimer(duration - currentPosition, 1000) {
+                @Override
+                public void onTick(long l) {
+                    progressBar.setProgress(duration - (int) l);
+                }
+
+                @Override
+                public void onFinish() {
+                    progressBar.setProgress(duration);
+                }
+            }.start();
+        }
     }
 
     MusicPlayerManager() {
