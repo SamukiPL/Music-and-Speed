@@ -15,41 +15,85 @@
         android:layout_height="match_parent"
         tools:context="me.samuki.musicandspeed.MainActivity">
 
+        <ImageView
+            android:id="@+id/albumCover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/progressBar"
+            android:src="@drawable/default_album_cover"/>
+
+        <ProgressBar
+            android:id="@id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/actualSpeed"/>
+
         <TextView
-            android:id="@+id/actualSpeed"
+            android:id="@id/actualSpeed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
+            android:layout_above="@+id/actualSong"
             android:text="@string/speed_not_available"
             android:textAlignment="center"
             android:textStyle="bold"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textColor="#000000"/>
 
         <TextView
-            android:id="@+id/actualSong"
+            android:id="@id/actualSong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/actualSpeed"
-            android:text="TextView"
+            android:layout_above="@+id/buttons"
             android:textAlignment="center"
             android:textColor="#000000"
-            android:textSize="18dp"/>
+            android:textSize="25sp"/>
 
-        <Button
-            android:id="@+id/playButton"
+        <LinearLayout
+            android:id="@id/buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/actualSong"
-            android:text="@string/play"
-            android:onClick="playMusic"/>
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:weightSum="3">
+            <ImageButton
+                android:id="@+id/previousButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_media_previous"
+                android:onClick="previousMusic"
+                android:layout_weight="1"
+                android:contentDescription="@string/previous"/>
+            <ImageButton
+                android:id="@+id/playButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_media_play"
+                android:text="@string/play"
+                android:onClick="playMusic"
+                android:layout_weight="1"
+                android:contentDescription="@string/play"/>
+            <ImageButton
+                android:id="@+id/nextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_media_next"
+                android:onClick="nextMusic"
+                android:layout_weight="1"
+                android:contentDescription="@string/next"/>
+        </LinearLayout>
 
     </RelativeLayout>
 </LinearLayout>

@@ -1,8 +1,10 @@
 package me.samuki.musicandspeed;
 
 import android.content.Context;
+import android.media.MediaMetadataRetriever;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,17 +21,23 @@ class MusicPlayerManager {
     private static final int identificationNumber = -1;
 
     private Context context;
-    private CountDownTimer timer;
+    private CountDownTimer volumeTimer, durationTimer;
+    private int duration, currentPosition;
     private boolean isTimerRunning;
     private long timeLeftToChangeVolume;
     private int lastMusicPlayed[];
     private int remembered;
     private int actualMusicPlaying;
+    private int pausedOn;
+    private ProgressBar progressBar;
 
     boolean isPlaying;
 
     int getActualMusicPlaying() {
         return actualMusicPlaying;
+    }
+    void setProgressBar(ProgressBar progressBar) {
+        this.progressBar = progressBar;
     }
 
     MusicPlayerManager(Context context) {
@@ -41,19 +49,34 @@ class MusicPlayerManager {
     void playMusic() throws IOException  {
         Random random = new Random(); //AccessFile
         int playThatOne = random.nextInt(audioNames.size());
+        String path = paths.get(playThatOne);
 
-        mediaPlayer.setDataSource(paths.get(playThatOne));
+        mediaPlayer.setDataSource(path);
         mediaPlayer.prepareAsync();
         isPlaying = true;
         addToLastMusicPlayed(playThatOne);
         actualMusicPlaying = playThatOne;
+        prepareProgressBar(path);
     }
 
     void playMusic(int whichMusic) throws IOException {
         stopMusic();
-        mediaPlayer.setDataSource(paths.get(whichMusic));
+        String path = paths.get(whichMusic);
+        mediaPlayer.setDataSource(path);
         mediaPlayer.prepareAsync();
         isPlaying = true;
+        prepareProgressBar(path);
+    }
+
+    void nextMusic(boolean isPlaying) throws IOException {
+        Random random = new Random(); //AccessFile
+        int playThatOne = random.nextInt(audioNames.size());
+        addToLastMusicPlayed(playThatOne);
+        actualMusicPlaying = playThatOne;
+        if (isPlaying) {
+            durationTimer.cancel();
+            playMusic(playThatOne);
+        } else progressBar.setProgress(0);
     }
 
     void playLastMusic() throws IOException {
@@ -64,11 +87,27 @@ class MusicPlayerManager {
     }
 
     void restartMusic() {
-        try {
-            playMusic(actualMusicPlaying);
+        if(pausedOn == actualMusicPlaying) {
+            mediaPlayer.start();
             isPlaying = true;
-        } catch (IOException e) {
-            e.printStackTrace();
+            durationTimer = new CountDownTimer(duration - currentPosition, 1000) {
+                @Override
+                public void onTick(long l) {
+                    progressBar.setProgress(duration - (int)l);
+                }
+
+                @Override
+                public void onFinish() {
+                    progressBar.setProgress(duration);
+                }
+            }.start();
+        }
+        else {
+            try {
+                playMusic(actualMusicPlaying);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -80,6 +119,7 @@ class MusicPlayerManager {
                 playLastMusic();
             else
                 actualMusicPlaying = getLastOnePlayed();
+            durationTimer.cancel();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,6 +128,9 @@ class MusicPlayerManager {
     void pauseMusic() {
         mediaPlayer.pause();
         isPlaying = false;
+        pausedOn = actualMusicPlaying;
+        durationTimer.cancel();
+        currentPosition = mediaPlayer.getCurrentPosition();
     }
 
     void stopMusic() {
@@ -98,9 +141,9 @@ class MusicPlayerManager {
 
     void changeVolumeDown() {
         if(isTimerRunning)
-            timer.cancel();
+            volumeTimer.cancel();
         isTimerRunning = true;
-        timer = new CountDownTimer(TIME_TO_CHANGE_VOLUME, 100) {
+        volumeTimer = new CountDownTimer(TIME_TO_CHANGE_VOLUME, 100) {
             @Override
             public void onTick(long l) {
                 float lowerVolume = (float)l/(float)TIME_TO_CHANGE_VOLUME;
@@ -118,15 +161,15 @@ class MusicPlayerManager {
                 }
             }
         };
-        timer.start();
+        volumeTimer.start();
     }
 
     void changeVolumeUp() {
         final long higherTheVolume = TIME_TO_CHANGE_VOLUME - timeLeftToChangeVolume;
         if(isTimerRunning)
-            timer.cancel();
+            volumeTimer.cancel();
         isTimerRunning = true;
-        timer = new CountDownTimer(higherTheVolume, 100) {
+        volumeTimer = new CountDownTimer(higherTheVolume, 100) {
 
             @Override
             public void onTick(long l) {
@@ -140,7 +183,7 @@ class MusicPlayerManager {
                 mediaPlayer.setVolume(1, 1);
             }
         };
-        timer.start();
+        volumeTimer.start();
     }
 
     private void setLastMusicPlayed() {
@@ -150,7 +193,6 @@ class MusicPlayerManager {
 
     private void addToLastMusicPlayed(int number) {
         for (int i = 0; i < rememberThatMany; i++) {
-            Log.d(DEBUG_TAG, number+"");
             if(lastMusicPlayed[i] == identificationNumber) {
                 lastMusicPlayed[i] = number;
                 remembered = i;
@@ -175,8 +217,25 @@ class MusicPlayerManager {
             }
         }
         remembered--;
-        Log.d(DEBUG_TAG, number + "");
         return number;
     }
 
+    private void prepareProgressBar(String path) {
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        mmr.setDataSource(path);
+        String durationString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        duration = Integer.parseInt(durationString);
+        progressBar.setMax(duration);
+        durationTimer = new CountDownTimer(duration, 1000) {
+            @Override
+            public void onTick(long l) {
+                progressBar.setProgress(duration - (int)l);
+            }
+
+            @Override
+            public void onFinish() {
+                progressBar.setProgress(duration);
+            }
+        }.start();
+    }
 }

@@ -279,8 +279,7 @@ public class MusicService extends Service {
         try {
             boolean tmpIsPlaying = playerManager.isPlaying;
             playerManager.stopMusic();//This action gonna change the value of isPlaying!
-            if(tmpIsPlaying)
-                playerManager.playMusic();
+            playerManager.nextMusic(tmpIsPlaying);
         } catch (IOException e) {
             e.printStackTrace();
         }

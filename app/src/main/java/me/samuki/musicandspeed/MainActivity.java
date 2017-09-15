@@ -1,34 +1,18 @@
 package me.samuki.musicandspeed;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toolbar;
-
-import java.util.LinkedList;
-
-import static me.samuki.musicandspeed.MusicService.audioNames;
-import static me.samuki.musicandspeed.MusicService.paths;
 
 public class MainActivity extends AppCompatActivity {
     public static final String DEBUG_TAG = "Debugujemy";
@@ -88,13 +72,17 @@ public class MainActivity extends AppCompatActivity {
             MusicService.LocalBinder binder = (MusicService.LocalBinder) iBinder;
             musicService = binder.getService();
             musicService.setSpeedViewAndTitleView(speedView, titleView);
+            ImageButton button = (ImageButton) findViewById(R.id.playButton);
             if(!MusicService.playerManager.isPlaying) {
                 playMusic(trackId);
+                button.setContentDescription(getString(R.string.stop));
+                button.setImageResource(android.R.drawable.ic_media_pause);
             } else {
-                Button button = (Button) findViewById(R.id.playButton);
-                button.setText(getString(R.string.stop));
+                button.setContentDescription(getString(R.string.stop));
+                button.setImageResource(android.R.drawable.ic_media_pause);
                 if(trackId != -1) playMusic(trackId);
             }
+            MusicService.playerManager.setProgressBar((ProgressBar)findViewById(R.id.progressBar));
             //Tutaj musi być coś co ma się zrobić jeśli w tle cały czas działałą apka,
             // w sensie jakaś fajna metoda
         }
@@ -112,29 +100,50 @@ public class MainActivity extends AppCompatActivity {
         startService(startIntent);
     }
 
-    private void stopMusicService() {
-        Intent stopIntent = new Intent(this, MusicService.class);
-        stopIntent.setAction("Stop");
-        startService(stopIntent);
+    private void restartMusicService() {
+        Intent startIntent = new Intent(this, MusicService.class);
+        startIntent.setAction("Restart");
+        startService(startIntent);
+    }
+
+    private void pauseMusicService() {
+        Intent pauseIntent = new Intent(this, MusicService.class);
+        pauseIntent.setAction("Pause");
+        startService(pauseIntent);
     }
 
     public void playMusic(View view) {
-        Button button = (Button) view;
-        if(((Button) view).getText().equals(getString(R.string.play))) {
-            startMusicService(-1);
-            button.setText(getString(R.string.stop));
+        ImageButton button = (ImageButton) view;
+        if(button.getContentDescription().equals(getString(R.string.play))) {
+            restartMusicService();
+            button.setContentDescription(getString(R.string.stop));
+            button.setImageResource(android.R.drawable.ic_media_pause);
         }
         else {
-            stopMusicService();
-            button.setText(getString(R.string.play));
+            pauseMusicService();
+            button.setContentDescription(getString(R.string.play));
+            button.setImageResource(android.R.drawable.ic_media_play);
         }
 
     }
 
     public void playMusic(int trackId) {
-        Button button = (Button) findViewById(R.id.playButton);
+        ImageButton button = (ImageButton) findViewById(R.id.playButton);
 
         startMusicService(trackId);
-        button.setText(getString(R.string.stop));
+        button.setImageResource(android.R.drawable.ic_media_pause);
+    }
+
+    public void previousMusic(View view) {
+        Intent previousIntent = new Intent(this, MusicService.class);
+        previousIntent.setAction("Previous");
+        startService(previousIntent);
+
+    }
+
+    public void nextMusic(View view) {
+        Intent nextIntent = new Intent(this, MusicService.class);
+        nextIntent.setAction("Next");
+        startService(nextIntent);
     }
 }
