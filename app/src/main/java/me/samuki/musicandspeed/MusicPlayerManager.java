@@ -59,13 +59,16 @@ class MusicPlayerManager {
         prepareProgressBar(path);
     }
 
-    void playMusic(int whichMusic) throws IOException {
+    void playMusic(int whichMusic, boolean previous) throws IOException {
         stopMusic();
         String path = paths.get(whichMusic);
         mediaPlayer.setDataSource(path);
         mediaPlayer.prepareAsync();
         isPlaying = true;
+        if(!previous)
+            addToLastMusicPlayed(whichMusic);
         prepareProgressBar(path);
+        actualMusicPlaying = whichMusic;
     }
 
     void nextMusic(boolean isPlaying) throws IOException {
@@ -75,15 +78,17 @@ class MusicPlayerManager {
         actualMusicPlaying = playThatOne;
         if (isPlaying) {
             durationTimer.cancel();
-            playMusic(playThatOne);
+            playMusic(playThatOne, false);
         } else progressBar.setProgress(0);
     }
 
-    void playLastMusic() throws IOException {
+    private void playLastMusic() throws IOException {
         actualMusicPlaying = getLastOnePlayed();
-        mediaPlayer.setDataSource(paths.get(actualMusicPlaying));
+        String path = paths.get(actualMusicPlaying);
+        mediaPlayer.setDataSource(path);
         mediaPlayer.prepareAsync();
         isPlaying = true;
+        prepareProgressBar(path);
     }
 
     void restartMusic() {
@@ -104,7 +109,7 @@ class MusicPlayerManager {
         }
         else {
             try {
-                playMusic(actualMusicPlaying);
+                playMusic(actualMusicPlaying, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -113,13 +118,15 @@ class MusicPlayerManager {
 
     void previousMusic() {
         try {
-            boolean tmpIsPlaying = isPlaying;
-            stopMusic();//This action gonna change the value of isPlaying!
-            if(tmpIsPlaying)
-                playLastMusic();
-            else
-                actualMusicPlaying = getLastOnePlayed();
             durationTimer.cancel();
+            if(remembered != 0) {
+                boolean tmpIsPlaying = isPlaying;
+                stopMusic();//This action gonna change the value of isPlaying!
+                if (tmpIsPlaying)
+                    playLastMusic();
+                else
+                    actualMusicPlaying = getLastOnePlayed();
+            } else playMusic(actualMusicPlaying, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -174,7 +181,6 @@ class MusicPlayerManager {
             @Override
             public void onTick(long l) {
                 float lowerVolume = ((float)TIME_TO_CHANGE_VOLUME - (float)l)/(float)TIME_TO_CHANGE_VOLUME;
-                Log.d(DEBUG_TAG, lowerVolume + "");
                 mediaPlayer.setVolume(lowerVolume, lowerVolume);
             }
 
@@ -208,15 +214,17 @@ class MusicPlayerManager {
 
     private int getLastOnePlayed() {
         int number = lastMusicPlayed[remembered];
-        if(remembered != 0) {
+        if(remembered > 0) {
             lastMusicPlayed[remembered] = identificationNumber;
-            for (int i = remembered; i > 0; i--) {
-                    int tmp = number;
-                    number = lastMusicPlayed[i - 1];
-                    lastMusicPlayed[i - 1] = tmp;
+            for (int i = remembered - 1; i > 0; i--) {
+                int tmp = number;
+                number = lastMusicPlayed[i];
+                lastMusicPlayed[i] = tmp;
             }
+            remembered--;
         }
-        remembered--;
+        if(actualMusicPlaying == number)
+            return getLastOnePlayed();
         return number;
     }
 

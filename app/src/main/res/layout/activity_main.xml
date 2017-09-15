@@ -24,7 +24,8 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
             android:layout_above="@+id/progressBar"
-            android:src="@drawable/default_album_cover"/>
+            android:src="@drawable/default_album_cover"
+            android:contentDescription="@string/albumCover"/>
 
         <ProgressBar
             android:id="@id/progressBar"

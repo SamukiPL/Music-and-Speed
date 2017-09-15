@@ -112,6 +112,9 @@ public class AudioListActivity extends Activity {
         Cursor cur = cr.query(uri, null, selection, null, sortOrder);
         int count = 0;
 
+        LinearLayout container = findViewById(R.id.musicContainer);
+        int i = 0;
+
         if(cur != null)
         {
             count = cur.getCount();
@@ -120,11 +123,27 @@ public class AudioListActivity extends Activity {
             {
                 while(cur.moveToNext())
                 {
-                    String data = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                    Log.d(DEBUG_TAG, data);
-                    audioNames.add(data);
+                    String name = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                    String artist = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                    int duration = cur.getInt(cur.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                    audioNames.add(name);
                     String path = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DATA));
                     paths.add(path);
+                    RelativeLayout musicRow = (RelativeLayout) inflater.inflate(R.layout.music_row, null);
+                    TextView nameView = musicRow.findViewById(R.id.musicRow_audioTitle);
+                    TextView artistView = musicRow.findViewById(R.id.musicRow_audioArtist);
+                    TextView durationView = musicRow.findViewById(R.id.musicRow_audioDuration);
+                    final int trackId = i;
+                    nameView.setText(name);
+                    artistView.setText(artist);
+                    durationView.setText(duration + "");
+                    musicRow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            goToMainActivity(trackId);
+                        }
+                    });
+                    container.addView(musicRow);
                 }
 
             }
@@ -132,21 +151,6 @@ public class AudioListActivity extends Activity {
 
         assert cur != null;
         cur.close();
-
-        LinearLayout container = findViewById(R.id.musicContainer);
-        for(int i = 0; i < audioNames.size(); i++) {
-            RelativeLayout musicRow = (RelativeLayout) inflater.inflate(R.layout.music_row, null);
-            TextView name = musicRow.findViewById(R.id.musicRow_name);
-            final int trackId = i;
-            name.setText(audioNames.get(i));
-            name.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    goToMainActivity(trackId);
-                }
-            });
-            container.addView(musicRow);
-        }
     }
 
     public void goToMainActivity(int trackId) {

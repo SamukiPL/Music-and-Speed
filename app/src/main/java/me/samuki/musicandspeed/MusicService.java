@@ -245,7 +245,7 @@ public class MusicService extends Service {
         int actualMusicPlayed = 0;
         try {
             if(trackId >= 0) {
-                playerManager.playMusic(trackId);
+                playerManager.playMusic(trackId, false);
                 actualMusicPlayed = trackId;
             }
             else {

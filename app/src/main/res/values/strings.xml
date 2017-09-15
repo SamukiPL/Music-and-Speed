@@ -4,6 +4,7 @@
     <string name="stop">Stop</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
+    <string name="albumCover">Album Cover</string>
     <string name="speed_not_available">Speed not available</string>
     <string name="current_speed">%1$.2f km/h</string>
 </resources>
