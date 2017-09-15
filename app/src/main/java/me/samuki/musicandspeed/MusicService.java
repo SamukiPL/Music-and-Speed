@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
@@ -30,7 +31,7 @@ import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 
 public class MusicService extends Service {
     private final IBinder mBinder = new LocalBinder();
-    private final int notifyID = 101;
+    private final int notifyID = 86;//NNNANI!! HACHIROKU!!!
 
     static MediaPlayer mediaPlayer;
     static Location activityLocation;
@@ -46,12 +47,14 @@ public class MusicService extends Service {
 
     private Context context;
     private TextView speedView, titleView;
+    private ImageButton playButton;
 
     public MusicService(){}
 
-    public void setSpeedViewAndTitleView(TextView speedView, TextView titleView) {
+    public void setSpeedViewAndTitleViewAndPlayButton(TextView speedView, TextView titleView, ImageButton playButton) {
         this.speedView = speedView;
         this.titleView = titleView;
+        this.playButton = playButton;
     }
 
     @Nullable
@@ -80,7 +83,7 @@ public class MusicService extends Service {
                 startService(nextIntent);
             }
         });
-        playerManager = new MusicPlayerManager(context);
+        playerManager = new MusicPlayerManager();
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -261,6 +264,8 @@ public class MusicService extends Service {
 
     private void restart() {
         playerManager.restartMusic();
+        playButton.setContentDescription(getString(R.string.stop));
+        playButton.setImageResource(android.R.drawable.ic_media_pause);
     }
 
     private void previous() {
@@ -273,6 +278,8 @@ public class MusicService extends Service {
 
     private void pause() {
         playerManager.pauseMusic();
+        playButton.setContentDescription(getString(R.string.play));
+        playButton.setImageResource(android.R.drawable.ic_media_play);
     }
 
     private void next() {

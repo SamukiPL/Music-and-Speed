@@ -20,7 +20,6 @@ class MusicPlayerManager {
     private static final int rememberThatMany = 50;
     private static final int identificationNumber = -1;
 
-    private Context context;
     private CountDownTimer volumeTimer, durationTimer;
     private int duration, currentPosition;
     private boolean isTimerRunning;
@@ -40,8 +39,7 @@ class MusicPlayerManager {
         this.progressBar = progressBar;
     }
 
-    MusicPlayerManager(Context context) {
-        this.context = context;
+    MusicPlayerManager() {
         isTimerRunning = false;
         setLastMusicPlayed();
     }

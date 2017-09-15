@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Music And Speed</string>
+    <string name="app_name">Initial Music</string>
     <string name="play">Play</string>
     <string name="stop">Stop</string>
     <string name="previous">Previous</string>

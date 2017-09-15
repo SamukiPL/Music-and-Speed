@@ -30,17 +30,7 @@ public class MainActivity extends AppCompatActivity {
         speedView = (TextView) findViewById(R.id.actualSpeed);
         titleView = (TextView) findViewById(R.id.actualSong);
 
-        android.support.v7.widget.Toolbar toolbar =
-                (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-        toolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        setToolbar();
 
         if(savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -59,6 +49,19 @@ public class MainActivity extends AppCompatActivity {
         bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
+    void setToolbar() {android.support.v7.widget.Toolbar toolbar =
+            (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        toolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
     @Override
     protected void onDestroy() {
         if(musicService != null)
@@ -71,12 +74,10 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MusicService.LocalBinder binder = (MusicService.LocalBinder) iBinder;
             musicService = binder.getService();
-            musicService.setSpeedViewAndTitleView(speedView, titleView);
             ImageButton button = (ImageButton) findViewById(R.id.playButton);
+            musicService.setSpeedViewAndTitleViewAndPlayButton(speedView, titleView, button);
             if(!MusicService.playerManager.isPlaying) {
                 playMusic(trackId);
-                button.setContentDescription(getString(R.string.stop));
-                button.setImageResource(android.R.drawable.ic_media_pause);
             } else {
                 button.setContentDescription(getString(R.string.stop));
                 button.setImageResource(android.R.drawable.ic_media_pause);
@@ -124,13 +125,13 @@ public class MainActivity extends AppCompatActivity {
             button.setContentDescription(getString(R.string.play));
             button.setImageResource(android.R.drawable.ic_media_play);
         }
-
     }
 
     public void playMusic(int trackId) {
         ImageButton button = (ImageButton) findViewById(R.id.playButton);
 
         startMusicService(trackId);
+        button.setContentDescription(getString(R.string.stop));
         button.setImageResource(android.R.drawable.ic_media_pause);
     }
 

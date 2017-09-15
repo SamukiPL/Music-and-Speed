@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,7 @@ import static me.samuki.musicandspeed.MusicService.audioNames;
 import static me.samuki.musicandspeed.MusicService.paths;
 import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 
-public class AudioListActivity extends Activity {
+public class AudioListActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     static boolean isPermission;
@@ -44,6 +45,7 @@ public class AudioListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_list);
         inflater = getLayoutInflater();
+        setToolbar();
 
         isPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
@@ -51,6 +53,19 @@ public class AudioListActivity extends Activity {
 
         Intent bindIntent = new Intent(this, MusicService.class);
         bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    void setToolbar() {
+        android.support.v7.widget.Toolbar toolbar =
+            (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -112,7 +127,7 @@ public class AudioListActivity extends Activity {
         Cursor cur = cr.query(uri, null, selection, null, sortOrder);
         int count = 0;
 
-        LinearLayout container = findViewById(R.id.musicContainer);
+        LinearLayout container = (LinearLayout) findViewById(R.id.musicContainer);
         int i = 0;
 
         if(cur != null)
@@ -133,7 +148,7 @@ public class AudioListActivity extends Activity {
                     TextView nameView = musicRow.findViewById(R.id.musicRow_audioTitle);
                     TextView artistView = musicRow.findViewById(R.id.musicRow_audioArtist);
                     TextView durationView = musicRow.findViewById(R.id.musicRow_audioDuration);
-                    final int trackId = i;
+                    final int trackId = i++;
                     nameView.setText(name);
                     artistView.setText(artist);
                     durationView.setText(duration + "");
