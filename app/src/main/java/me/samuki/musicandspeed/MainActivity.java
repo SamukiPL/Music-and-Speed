@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView speedView, titleView;
     private MusicService musicService;
     private int trackId;
+    private boolean playNewSong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +37,10 @@ public class MainActivity extends AppCompatActivity {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
                 trackId = 0;
+                playNewSong = false;
             } else {
                 trackId = extras.getInt("trackId");
+                playNewSong = extras.getBoolean("play");
             }
         } else {
             trackId = (int) savedInstanceState.getSerializable("trackId");
@@ -76,12 +79,14 @@ public class MainActivity extends AppCompatActivity {
             musicService = binder.getService();
             ImageButton button = (ImageButton) findViewById(R.id.playButton);
             musicService.setSpeedViewAndTitleViewAndPlayButton(speedView, titleView, button);
-            if(!MusicService.playerManager.isPlaying) {
+            if(!MusicService.playerManager.isPlaying && playNewSong) {
                 playMusic(trackId);
             } else {
-                button.setContentDescription(getString(R.string.stop));
-                button.setImageResource(android.R.drawable.ic_media_pause);
-                if(trackId != -1) playMusic(trackId);
+                if(trackId != -86 || playNewSong) {
+                    button.setContentDescription(getString(R.string.stop));
+                    button.setImageResource(android.R.drawable.ic_media_pause);
+                    if (trackId >= 0) playMusic(trackId);
+                }
             }
             MusicService.playerManager.setProgressBar((ProgressBar)findViewById(R.id.progressBar));
             //Tutaj musi być coś co ma się zrobić jeśli w tle cały czas działałą apka,

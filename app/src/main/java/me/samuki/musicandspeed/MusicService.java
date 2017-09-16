@@ -54,6 +54,7 @@ public class MusicService extends Service {
     public void setSpeedViewAndTitleViewAndPlayButton(TextView speedView, TextView titleView, ImageButton playButton) {
         this.speedView = speedView;
         this.titleView = titleView;
+        this.titleView.setText(audioNames.get(playerManager.getActualMusicPlaying()));
         this.playButton = playButton;
     }
 

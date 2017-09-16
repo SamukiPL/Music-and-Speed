@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -82,6 +83,18 @@ public class AudioListActivity extends AppCompatActivity {
         titleView.setText(audioNames.get(MusicService.playerManager.getActualMusicPlaying()));
     }
 
+    void setPlayButton() {
+        ImageButton button = (ImageButton) findViewById(R.id.playButton);
+        if(MusicService.playerManager.isPlaying) {
+            button.setContentDescription(getString(R.string.stop));
+            button.setImageResource(android.R.drawable.ic_media_pause);
+        }
+        else {
+            button.setContentDescription(getString(R.string.play));
+            button.setImageResource(android.R.drawable.ic_media_play);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings_menu, menu);
@@ -119,6 +132,7 @@ public class AudioListActivity extends AppCompatActivity {
             MusicService.LocalBinder binder = (MusicService.LocalBinder) iBinder;
             musicService = binder.getService();
             setTitleAndProgressBar();
+            setPlayButton();
             serviceDisconnected = false;
             //Tutaj musi być coś co ma się zrobić jeśli w tle cały czas działałą apka,
             // w sensie jakaś fajna metoda
@@ -211,24 +225,54 @@ public class AudioListActivity extends AppCompatActivity {
     public void goToMainActivity(int trackId) {
         Intent mainIntent = new Intent(this, MainActivity.class);
         mainIntent.putExtra("trackId", trackId);
+        mainIntent.putExtra("play", true);
         startActivity(mainIntent);
     }
 
     public void goToMainActivity(View view) {
         Intent mainIntent = new Intent(this, MainActivity.class);
         mainIntent.putExtra("trackId", -86);
+        mainIntent.putExtra("play", MusicService.playerManager.isPlaying);
         startActivity(mainIntent);
     }
 
+
+    private void restartMusicService() {
+        Intent startIntent = new Intent(this, MusicService.class);
+        startIntent.setAction("Restart");
+        startService(startIntent);
+    }
+
+    private void pauseMusicService() {
+        Intent pauseIntent = new Intent(this, MusicService.class);
+        pauseIntent.setAction("Pause");
+        startService(pauseIntent);
+    }
+
     public void playMusic(View view) {
-        Toast.makeText(this, "Play!", Toast.LENGTH_SHORT).show();
+        ImageButton button = (ImageButton) view;
+        if(button.getContentDescription().equals(getString(R.string.play))) {
+            restartMusicService();
+            button.setContentDescription(getString(R.string.stop));
+            button.setImageResource(android.R.drawable.ic_media_pause);
+        }
+        else {
+            pauseMusicService();
+            button.setContentDescription(getString(R.string.play));
+            button.setImageResource(android.R.drawable.ic_media_play);
+        }
     }
 
     public void previousMusic(View view) {
-        Toast.makeText(this, "Previous!", Toast.LENGTH_SHORT).show();
+        Intent previousIntent = new Intent(this, MusicService.class);
+        previousIntent.setAction("Previous");
+        startService(previousIntent);
+
     }
 
     public void nextMusic(View view) {
-        Toast.makeText(this, "Next!", Toast.LENGTH_SHORT).show();
+        Intent nextIntent = new Intent(this, MusicService.class);
+        nextIntent.setAction("Next");
+        startService(nextIntent);
     }
 }

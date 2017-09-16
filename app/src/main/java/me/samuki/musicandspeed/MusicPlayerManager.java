@@ -94,6 +94,7 @@ class MusicPlayerManager {
             durationTimer.cancel();
             playMusic(playThatOne, false);
         } else progressBar.setProgress(0);
+        Log.d(DEBUG_TAG, String.valueOf(remembered));
     }
 
     private void playLastMusic() throws IOException {
@@ -132,7 +133,8 @@ class MusicPlayerManager {
 
     void previousMusic() {
         try {
-            durationTimer.cancel();
+            if (isPlaying)
+                durationTimer.cancel();
             if(remembered != 0) {
                 boolean tmpIsPlaying = isPlaying;
                 stopMusic();//This action gonna change the value of isPlaying!
@@ -140,7 +142,7 @@ class MusicPlayerManager {
                     playLastMusic();
                 else
                     actualMusicPlaying = getLastOnePlayed();
-            } else playMusic(actualMusicPlaying, true);
+            } else if(isPlaying) playMusic(actualMusicPlaying, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
