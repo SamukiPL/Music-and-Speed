@@ -22,6 +22,10 @@
             <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SettingsActivity">
+        </activity>
+        <activity android:name=".NewListActivity">
+        </activity>
         <service android:name=".MusicService"
             android:exported="false" />
     </application>

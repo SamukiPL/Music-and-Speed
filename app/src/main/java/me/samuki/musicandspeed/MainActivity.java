@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     void setToolbar() {android.support.v7.widget.Toolbar toolbar =
             (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-        toolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
