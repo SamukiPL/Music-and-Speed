@@ -237,7 +237,6 @@ public class AudioListActivity extends AppCompatActivity {
         startActivity(mainIntent);
     }
 
-
     private void restartMusicService() {
         Intent startIntent = new Intent(this, MusicService.class);
         startIntent.setAction("Restart");

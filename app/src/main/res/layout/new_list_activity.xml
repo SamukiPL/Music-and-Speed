@@ -27,7 +27,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="60dp"
                 android:layout_marginEnd="60dp"
-                android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
+                android:src="@drawable/ic_keyboard_arrow_up_black_48dp"
                 android:contentDescription="@string/up"
                 android:onClick="changeValue"/>
             <ImageView
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@id/settings_0Up"
                 android:layout_toStartOf="@id/settings_0Up"
-                android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
+                android:src="@drawable/ic_keyboard_arrow_up_black_48dp"
                 android:contentDescription="@string/up"
                 android:onClick="changeValue"/>
             <ImageView
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@id/settings_1Up"
                 android:layout_toStartOf="@id/settings_1Up"
-                android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
+                android:src="@drawable/ic_keyboard_arrow_up_black_48dp"
                 android:contentDescription="@string/up"
                 android:onClick="changeValue"/>
             <TextView
@@ -107,7 +107,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="60dp"
                 android:layout_marginEnd="60dp"
-                android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+                android:src="@drawable/ic_keyboard_arrow_down_black_48dp"
                 android:contentDescription="@string/down"
                 android:onClick="changeValue"/>
             <ImageView
@@ -117,7 +117,7 @@
                 android:layout_below="@id/settings_0PositionNumber"
                 android:layout_toLeftOf="@id/settings_0Up"
                 android:layout_toStartOf="@id/settings_0Up"
-                android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+                android:src="@drawable/ic_keyboard_arrow_down_black_48dp"
                 android:contentDescription="@string/down"
                 android:onClick="changeValue"/>
             <ImageView
@@ -127,7 +127,7 @@
                 android:layout_below="@id/settings_0PositionNumber"
                 android:layout_toLeftOf="@id/settings_1Up"
                 android:layout_toStartOf="@id/settings_1Up"
-                android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+                android:src="@drawable/ic_keyboard_arrow_down_black_48dp"
                 android:contentDescription="@string/down"
                 android:onClick="changeValue"/>
             <LinearLayout
