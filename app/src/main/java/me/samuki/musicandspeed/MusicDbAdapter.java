@@ -55,10 +55,10 @@ class MusicDbAdapter {
     }
 
     public void createTable(String tableName) {
-        String createTableSQL = "CREATE TABLE " + tableName + "( " +
+        String createTableSQL = "CREATE TABLE \"" + tableName + "\"( " +
                 KEY_ID + " " + ID_OPTIONS + ", " +
                 KEY_NAME + " " + NAME_OPTIONS + ", " +
-                KEY_SLOW_DRIVING + " " + SLOW_DRIVING_OPTIONS +
+                KEY_SLOW_DRIVING + " " + SLOW_DRIVING_OPTIONS + ", " +
                 KEY_FAST_DRIVING + " " + FAST_DRIVING_OPTIONS +
                 ");";
         db.execSQL(createTableSQL);
@@ -107,7 +107,12 @@ class MusicDbAdapter {
 
     public Cursor getAllSongs(String tableName) {
         String columns[] = {KEY_ID, KEY_NAME, KEY_SLOW_DRIVING, KEY_FAST_DRIVING};
-        return db.query(tableName, columns, null, null, null, null, null);
+        return db.query("\"" + tableName + "\"", columns, null, null, null, null, null);
+    }
+
+    public Cursor getAllTablesNames() {
+        String columns[] = {KEY_ID, KEY_NAME};
+        return db.query(LISTS_NAMES_TABLE, columns, null, null, null, null, null);
     }
 
     private static class DatabaseHelper extends SQLiteOpenHelper {

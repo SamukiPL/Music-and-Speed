@@ -41,7 +41,6 @@ public class NewListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addList:
-                MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
 
                 TextView newListNameView = (TextView) findViewById(R.id.settings_newListName);
                 String newListName = newListNameView.getText().toString();
@@ -51,6 +50,8 @@ public class NewListActivity extends AppCompatActivity {
                 List<Boolean> fastDrivingList = new ArrayList<Boolean>();
                 getCheckedSongs(songsNamesList, slowDrivingList, fastDrivingList);
                 if(!newListName.equals("") && speed > 0 && songsNamesList.size() > 0) {
+                    MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
+                    dbAdapter.open();
                     dbAdapter.insertTableName(newListName);
                     dbAdapter.createTable(newListName);
                     for (int i = 0; i < songsNamesList.size(); i++) {
@@ -59,6 +60,7 @@ public class NewListActivity extends AppCompatActivity {
                         dbAdapter.insertData(newListName, songsNamesList.get(i),
                                              slowDriving, fastDriving);
                     }
+                    dbAdapter.close();
                     finish();
                 } else {
                     Toast.makeText(this, getString(R.string.fillInAllFields), Toast.LENGTH_SHORT).show();

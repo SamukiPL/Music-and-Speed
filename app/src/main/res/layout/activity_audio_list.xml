@@ -68,6 +68,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+                <TextView
+                    android:id="@+id/defaultList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/defaultList"
+                    android:textAlignment="center"
+                    android:textSize="20sp"/>
 
             </LinearLayout>
         </ScrollView>

@@ -55,6 +55,7 @@ public class AudioListActivity extends AppCompatActivity {
         isPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         if(isPermission) setAudioNamesList(); else askForPermission();
+        setListsNamesList();
     }
 
     @Override
@@ -186,14 +187,11 @@ public class AudioListActivity extends AppCompatActivity {
         LinearLayout container = (LinearLayout) findViewById(R.id.musicContainer);
         int i = 0;
 
-        if(cur != null)
-        {
+        if(cur != null) {
             count = cur.getCount();
 
-            if(count > 0)
-            {
-                while(cur.moveToNext())
-                {
+            if(count > 0) {
+                while(cur.moveToNext()) {
                     String name = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.TITLE));
                     String artist = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                     int duration = cur.getInt(cur.getColumnIndex(MediaStore.Audio.Media.DURATION));
@@ -229,7 +227,47 @@ public class AudioListActivity extends AppCompatActivity {
     }
 
     public void setListsNamesList() {
+        LinearLayout container = (LinearLayout) findViewById(R.id.listContainer);
 
+        MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
+        dbAdapter.open();
+        Cursor tablesNames = dbAdapter.getAllTablesNames();
+        int count = 0;
+
+        if(tablesNames != null) {
+            count = tablesNames.getCount();
+
+            if(count > 0) {
+                while(tablesNames.moveToNext()) {
+                    String name = tablesNames.getString(tablesNames.getColumnIndex(MusicDbAdapter.KEY_NAME));
+                    TextView listNameView = new TextView(this);
+                    listNameView.setText(name);
+                    container.addView(listNameView);
+                    Cursor tak = dbAdapter.getAllSongs(name);
+                    int nie = 0;
+                    if(tak != null) {
+                        nie = tak.getCount();
+                        if(nie > 0) {
+                            while(tak.moveToNext()) {
+                                String songName = tak.getString(tak.getColumnIndex(MusicDbAdapter.KEY_NAME));
+                                int slow = tak.getInt(tak.getColumnIndex(MusicDbAdapter.KEY_SLOW_DRIVING));
+                                int fast = tak.getInt(tak.getColumnIndex(MusicDbAdapter.KEY_FAST_DRIVING));
+
+                                Log.d(DEBUG_TAG, songName +": " + slow + " " + fast);
+                            }
+                        }
+                    }
+
+                    assert tak != null;
+                    tak.close();
+                }
+
+            }
+        }
+
+        assert tablesNames != null;
+        tablesNames.close();
+        dbAdapter.close();
     }
 
     public void goToMainActivity(int trackId) {
