@@ -1,10 +1,6 @@
 package me.samuki.musicandspeed;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,18 +9,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.util.LinkedList;
-import java.util.zip.Inflater;
+import java.util.ArrayList;
+import java.util.List;
 
 import static me.samuki.musicandspeed.MusicService.audioNames;
-import static me.samuki.musicandspeed.MusicService.paths;
 import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 
 public class NewListActivity extends AppCompatActivity {
@@ -47,9 +41,21 @@ public class NewListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addList:
-                Toast.makeText(this, "Dodane", Toast.LENGTH_SHORT).show();
-                //I tutaj ma się robić coś szczególnego, prawdopodobnie SQL :(
-                finish();
+                TextView newListNameView = (TextView) findViewById(R.id.settings_newListName);
+                String newListName = newListNameView.getText().toString();
+                int speed = getSpeed();
+                List<String> songsNamesList = new ArrayList<String>();
+                List<Boolean> slowDrivingList = new ArrayList<Boolean>();
+                List<Boolean> fastDrivingList = new ArrayList<Boolean>();
+                getCheckedSongs(songsNamesList, slowDrivingList, fastDrivingList);
+                if(!newListName.equals("") && speed > 0 && songsNamesList.size() > 0) {
+                    for (int i = 0; i < songsNamesList.size(); i++) {
+                        Log.d(DEBUG_TAG, songsNamesList.get(i) + " " + slowDrivingList.get(i) + " " + fastDrivingList.get(i));
+                    }
+                    finish();
+                } else {
+                    Toast.makeText(this, getString(R.string.fillInAllFields), Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -104,5 +110,34 @@ public class NewListActivity extends AppCompatActivity {
         if(view.getContentDescription().equals(getString(R.string.up))) value++; else value--;
         if(value == 10) value = 0; else if(value == -1) value = 9;
         valueView.setText(getString(R.string.valueInt, value));
+    }
+
+    private int getSpeed() {
+        TextView position0 = (TextView) findViewById(R.id.settings_0PositionNumber);
+        TextView position1 = (TextView) findViewById(R.id.settings_1PositionNumber);
+        TextView position2 = (TextView) findViewById(R.id.settings_2PositionNumber);
+        return  Integer.parseInt(position2.getText().toString())*100 +
+                Integer.parseInt(position1.getText().toString())*10  +
+                Integer.parseInt(position0.getText().toString());
+    }
+
+    private void getCheckedSongs(List<String> songsNamesList, List<Boolean> slowDrivingList,
+                                 List<Boolean> fastDrivingList) {
+        LinearLayout container = (LinearLayout) findViewById(R.id.settings_trackContainer);
+
+        for(int i = 0; i < container.getChildCount(); i++) {
+            RelativeLayout trackRow = (RelativeLayout) container.getChildAt(i);
+            CheckBox slowDrivingCheckBox = trackRow.findViewById(R.id.musicRowCheckBoxes_slowDriving);
+            boolean slowDrivingChecked = slowDrivingCheckBox.isChecked();
+            CheckBox fastDrivingCheckBox = trackRow.findViewById(R.id.musicRowCheckBoxes_fastDriving);
+            boolean fastDrivingChecked = fastDrivingCheckBox.isChecked();
+            if(slowDrivingChecked || fastDrivingChecked) {
+                TextView songNameView = trackRow.findViewById(R.id.musicRow_audioTitle);
+                String songName = songNameView.getText().toString();
+                songsNamesList.add(songName);
+                slowDrivingList.add(slowDrivingChecked);
+                fastDrivingList.add(fastDrivingChecked);
+            }
+        }
     }
 }
