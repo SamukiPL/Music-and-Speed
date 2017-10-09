@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">#18191b</color>
     <color name="colorAccent">#be0411</color>
 
+    <color name="colorListChooserChecked">#d2d2d2</color>
+    <color name="colorListChooserUnchecked">#a2a5a6</color>
+
     <color name="white">#FFF</color>
     <color name="green">#00ff15</color>
     <color name="yellow">#ffdd00</color>

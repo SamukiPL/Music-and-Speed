@@ -41,6 +41,8 @@ public class NewListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addList:
+                MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
+
                 TextView newListNameView = (TextView) findViewById(R.id.settings_newListName);
                 String newListName = newListNameView.getText().toString();
                 int speed = getSpeed();
@@ -49,8 +51,13 @@ public class NewListActivity extends AppCompatActivity {
                 List<Boolean> fastDrivingList = new ArrayList<Boolean>();
                 getCheckedSongs(songsNamesList, slowDrivingList, fastDrivingList);
                 if(!newListName.equals("") && speed > 0 && songsNamesList.size() > 0) {
+                    dbAdapter.insertTableName(newListName);
+                    dbAdapter.createTable(newListName);
                     for (int i = 0; i < songsNamesList.size(); i++) {
-                        Log.d(DEBUG_TAG, songsNamesList.get(i) + " " + slowDrivingList.get(i) + " " + fastDrivingList.get(i));
+                        int slowDriving = (slowDrivingList.get(i)) ? 1:0;
+                        int fastDriving = (fastDrivingList.get(i)) ? 1:0;
+                        dbAdapter.insertData(newListName, songsNamesList.get(i),
+                                             slowDriving, fastDriving);
                     }
                     finish();
                 } else {

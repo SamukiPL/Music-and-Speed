@@ -14,5 +14,6 @@
     <string name="down">Down</string>
     <string name="valueInt">%1$d</string>
     <string name="zero">0</string>
+    <string name="minutesAndSeconds">%1$d:%2$d%3$d</string>
     <string name="fillInAllFields">Please fill in all fields</string>
 </resources>

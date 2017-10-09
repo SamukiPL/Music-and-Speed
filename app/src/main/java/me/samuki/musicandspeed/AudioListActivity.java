@@ -22,10 +22,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import java.util.LinkedList;
@@ -195,6 +197,10 @@ public class AudioListActivity extends AppCompatActivity {
                     String name = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.TITLE));
                     String artist = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                     int duration = cur.getInt(cur.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                    duration = duration/1000;
+                    int secondsTens = (duration%60)/10;
+                    int secondsOnes = (duration%60) - secondsTens * 10;
+                    int minutes = duration/60;
                     audioNames.add(name);
                     String path = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DATA));
                     paths.add(path);
@@ -205,7 +211,7 @@ public class AudioListActivity extends AppCompatActivity {
                     final int trackId = i++;
                     nameView.setText(name);
                     artistView.setText(artist);
-                    durationView.setText(duration + "");
+                    durationView.setText(getString(R.string.minutesAndSeconds, minutes, secondsTens, secondsOnes));
                     musicRow.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -220,6 +226,10 @@ public class AudioListActivity extends AppCompatActivity {
 
         assert cur != null;
         cur.close();
+    }
+
+    public void setListsNamesList() {
+
     }
 
     public void goToMainActivity(int trackId) {
@@ -273,5 +283,26 @@ public class AudioListActivity extends AppCompatActivity {
         Intent nextIntent = new Intent(this, MusicService.class);
         nextIntent.setAction("Next");
         startService(nextIntent);
+    }
+
+    public void changeList(View view) {
+        View songsList = findViewById(R.id.musicList);
+        View songsListChooser = findViewById(R.id.musicListChooser);
+        View listsList = findViewById(R.id.listsList);
+        View listsListChooser = findViewById(R.id.listsListChooser);
+        switch (view.getId()) {
+            case R.id.musicListChooser:
+                songsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0f));
+                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorListChooserChecked));
+                listsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorListChooserUnchecked));
+                break;
+            case R.id.listsListChooser:
+                songsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorListChooserUnchecked));
+                listsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0f));
+                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorListChooserChecked));
+                break;
+        }
     }
 }

@@ -6,22 +6,72 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="me.samuki.musicandspeed.MainActivity" >
-        <include
-            android:id="@+id/activityToolbar"
-            layout="@layout/tool_bar"/>
+    <include
+        android:id="@+id/activityToolbar"
+        layout="@layout/tool_bar"/>
+    <LinearLayout
+        android:id="@+id/listChooser"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@id/activityToolbar"
+        android:orientation="horizontal"
+        android:weightSum="2">
+            <TextView
+                android:id="@+id/musicListChooser"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Songs"
+                android:textAlignment="center"
+                android:background="@color/colorListChooserChecked"
+                android:onClick="changeList"/>
+            <TextView
+                android:id="@+id/listsListChooser"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lists"
+                android:textAlignment="center"
+                android:background="@color/colorListChooserUnchecked"
+                android:onClick="changeList"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/listChooser"
+        android:layout_above="@+id/player"
+        android:weightSum="1"
+        android:baselineAligned="false">
         <ScrollView
-            android:layout_width="match_parent"
+            android:id="@+id/musicList"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_below="@id/activityToolbar"
-            android:layout_above="@+id/player">
-                <LinearLayout
-                    android:id="@+id/musicContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+            android:layout_weight="1">
 
-                </LinearLayout>
+            <LinearLayout
+                android:id="@+id/musicContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
         </ScrollView>
+        <ScrollView
+            android:id="@+id/listsList"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0">
+
+            <LinearLayout
+                android:id="@+id/listContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
         <RelativeLayout
             android:id="@id/player"
             android:layout_width="match_parent"

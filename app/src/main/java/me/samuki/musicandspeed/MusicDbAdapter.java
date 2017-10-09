@@ -13,6 +13,7 @@ class MusicDbAdapter {
 
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "database.db";
+    private static final String LISTS_NAMES_TABLE = "LISTS_NAMES";
 
     public static final String KEY_ID = "ID";
     public static final String ID_OPTIONS = "INTEGER PRIMARY KEY AUTOINCREMENT";
@@ -26,6 +27,10 @@ class MusicDbAdapter {
     public static final String KEY_FAST_DRIVING = "FAST_DRIVING";
     public static final String FAST_DRIVING_OPTIONS = "INTEGER DEFAULT 0";
     public static final int FAST_DRIVING_COLUMN = 3;
+
+    private static final String CREATE_LISTS_NAMES_TABLE = "CREATE TABLE " + LISTS_NAMES_TABLE +
+            "( " +  KEY_ID + " " + ID_OPTIONS + ", " +
+                    KEY_NAME + " " + NAME_OPTIONS + ");";
 
     private SQLiteDatabase db;
     private Context context;
@@ -72,6 +77,22 @@ class MusicDbAdapter {
         return contentValues;
     }
 
+    public long insertTableName(String tableName) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_NAME, tableName);
+        return db.insert(LISTS_NAMES_TABLE, null, contentValues);
+    }
+
+    public boolean deleteTableName(long id) {
+        String where = KEY_ID + "=" + id;
+        return db.delete(LISTS_NAMES_TABLE, where, null) > 0;
+    }
+
+    public boolean deleteTableName(String tableName) {
+        String where = KEY_NAME + "=" + tableName;
+        return db.delete(LISTS_NAMES_TABLE, where, null) > 0;
+    }
+
     public long insertData(String tableName, String name, int slowDriving, int fastDriving) {
         ContentValues insertValues = newValues(name, slowDriving, fastDriving);
         return db.insert(tableName, null, insertValues);
@@ -96,8 +117,8 @@ class MusicDbAdapter {
         }
 
         @Override
-        public void onCreate(SQLiteDatabase sqLiteDatabase) {
-
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL(CREATE_LISTS_NAMES_TABLE);
         }
 
         @Override
