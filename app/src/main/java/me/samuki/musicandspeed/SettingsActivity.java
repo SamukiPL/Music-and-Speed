@@ -60,14 +60,19 @@ public class SettingsActivity extends AppCompatActivity {
             count = tablesNames.getCount();
             if(count > 0) {
                 while(tablesNames.moveToNext()) {
-                    final String name = tablesNames.getString(tablesNames.getColumnIndex(MusicDbAdapter.KEY_NAME));
+                    final String name = tablesNames.getString(
+                            tablesNames.getColumnIndex(MusicDbAdapter.KEY_NAME));
+                    final int speed = tablesNames.getInt(
+                            tablesNames.getColumnIndex(MusicDbAdapter.KEY_SPEED));
                     TextView listNameView = (TextView)inflater.inflate(R.layout.list_row, null);
                     listNameView.setText(name);
                     listNameView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent intent = new Intent(getApplicationContext(), NewListActivity.class);
+                            Intent intent = new Intent( getApplicationContext(),
+                                                        NewListActivity.class);
                             intent.putExtra(MusicDbAdapter.KEY_NAME, name);
+                            intent.putExtra(MusicDbAdapter.KEY_SPEED, speed);
                             startActivity(intent);
                         }
                     });

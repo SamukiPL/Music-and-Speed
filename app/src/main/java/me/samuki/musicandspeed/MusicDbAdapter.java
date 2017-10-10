@@ -81,9 +81,10 @@ class MusicDbAdapter {
         return contentValues;
     }
 
-    public long insertTableName(String tableName) {
+    public long insertTableName(String tableName, int speed) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_NAME, tableName);
+        contentValues.put(KEY_SPEED, speed);
         return db.insert(LISTS_NAMES_TABLE, null, contentValues);
     }
 
@@ -115,7 +116,7 @@ class MusicDbAdapter {
     }
 
     public Cursor getAllTablesNames() {
-        String columns[] = {KEY_ID, KEY_NAME};
+        String columns[] = {KEY_ID, KEY_NAME, KEY_SPEED};
         return db.query(LISTS_NAMES_TABLE, columns, null, null, null, null, null);
     }
 

@@ -26,6 +26,7 @@ import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 public class NewListActivity extends AppCompatActivity {
 
     private String listName;
+    private int speed;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,19 +37,22 @@ public class NewListActivity extends AppCompatActivity {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
                 listName = "";
+                speed = 0;
             } else {
                 listName = extras.getString(MusicDbAdapter.KEY_NAME);
+                speed = extras.getInt(MusicDbAdapter.KEY_SPEED);
             }
         } else {
             listName = (String) savedInstanceState.getSerializable(MusicDbAdapter.KEY_NAME);
+            speed = (int) savedInstanceState.getSerializable(MusicDbAdapter.KEY_SPEED);
         }
 
         setToolbar();
         setAudioNamesList();
-        if (!listName.equals("")) {
-            EditText listNameEditText = (EditText) findViewById(R.id.settings_newListName);
-            listNameEditText.setText(listName);
-        }
+        setSpeed(speed);
+
+        EditText listNameEditText = (EditText) findViewById(R.id.settings_newListName);
+        listNameEditText.setText(listName);
     }
 
     @Override
@@ -76,7 +80,11 @@ public class NewListActivity extends AppCompatActivity {
                 if(!newListName.equals("") && speed > 0 && songsNamesList.size() > 0) {
                     MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
                     dbAdapter.open();
-                    dbAdapter.insertTableName(newListName);
+                    if (!listName.equals("")) {
+                        dbAdapter.dropTable(listName);
+                        dbAdapter.deleteTableName(listName);
+                    }
+                    dbAdapter.insertTableName(newListName, speed);
                     dbAdapter.createTable(newListName);
                     for (int i = 0; i < songsNamesList.size(); i++) {
                         int slowDriving = (slowDrivingList.get(i)) ? 1:0;
@@ -176,13 +184,27 @@ public class NewListActivity extends AppCompatActivity {
         valueView.setText(getString(R.string.valueInt, value));
     }
 
+    private void setSpeed(int speed) {
+        TextView position0View = (TextView) findViewById(R.id.settings_0PositionNumber);
+        TextView position1View = (TextView) findViewById(R.id.settings_1PositionNumber);
+        TextView position2View = (TextView) findViewById(R.id.settings_2PositionNumber);
+        int position2 = speed/100;
+        speed = (speed - (position2*100));
+        int position1 = speed/10;
+        speed = (speed - (position1*10));
+        int position0 = speed;
+        position0View.setText(getString(R.string.valueInt, position0));
+        position1View.setText(getString(R.string.valueInt, position1));
+        position2View.setText(getString(R.string.valueInt, position2));
+    }
+
     private int getSpeed() {
-        TextView position0 = (TextView) findViewById(R.id.settings_0PositionNumber);
-        TextView position1 = (TextView) findViewById(R.id.settings_1PositionNumber);
-        TextView position2 = (TextView) findViewById(R.id.settings_2PositionNumber);
-        return  Integer.parseInt(position2.getText().toString())*100 +
-                Integer.parseInt(position1.getText().toString())*10  +
-                Integer.parseInt(position0.getText().toString());
+        TextView position0View = (TextView) findViewById(R.id.settings_0PositionNumber);
+        TextView position1View = (TextView) findViewById(R.id.settings_1PositionNumber);
+        TextView position2View = (TextView) findViewById(R.id.settings_2PositionNumber);
+        return  Integer.parseInt(position2View.getText().toString())*100 +
+                Integer.parseInt(position1View.getText().toString())*10  +
+                Integer.parseInt(position0View.getText().toString());
     }
 
     private void getCheckedSongs(List<String> songsNamesList, List<Boolean> slowDrivingList,
