@@ -27,10 +27,14 @@ class MusicDbAdapter {
     public static final String KEY_FAST_DRIVING = "FAST_DRIVING";
     public static final String FAST_DRIVING_OPTIONS = "INTEGER DEFAULT 0";
     public static final int FAST_DRIVING_COLUMN = 3;
+    public static final String KEY_SPEED = "SPEED";
+    public static final String SPEED_OPTIONS = "INTEGER DEFAULT 0";
+    public static final int SPEED_COLUMN = 2;
 
     private static final String CREATE_LISTS_NAMES_TABLE = "CREATE TABLE " + LISTS_NAMES_TABLE +
             "( " +  KEY_ID + " " + ID_OPTIONS + ", " +
-                    KEY_NAME + " " + NAME_OPTIONS + ");";
+                    KEY_NAME + " " + NAME_OPTIONS + ", " +
+                    KEY_SPEED + " " + SPEED_OPTIONS + ");";
 
     private SQLiteDatabase db;
     private Context context;
@@ -65,7 +69,7 @@ class MusicDbAdapter {
     }
 
     public void dropTable(String tableName) {
-        String dropTableSQL = "DROP TABLE IF EXISTS " + tableName;
+        String dropTableSQL = "DROP TABLE IF EXISTS \"" + tableName + "\"";
         db.execSQL(dropTableSQL);
     }
 
@@ -89,20 +93,20 @@ class MusicDbAdapter {
     }
 
     public boolean deleteTableName(String tableName) {
-        String where = KEY_NAME + "=" + tableName;
+        String where = KEY_NAME + "= \"" + tableName + "\"";
         return db.delete(LISTS_NAMES_TABLE, where, null) > 0;
     }
 
     public long insertData(String tableName, String name, int slowDriving, int fastDriving) {
         ContentValues insertValues = newValues(name, slowDriving, fastDriving);
-        return db.insert(tableName, null, insertValues);
+        return db.insert("\"" + tableName + "\"", null, insertValues);
     }
 
     public boolean updateData(String tableName, String name, int slowDriving, int fastDriving) {
         //Nie wiem czy ta metoda się przyda, ale niech będzie :D
         String where = KEY_NAME + " = " + name;
         ContentValues updateValues = newValues(name, slowDriving, fastDriving);
-        return db.update(tableName, updateValues, where, null) > 0;
+        return db.update("\"" + tableName + "\"", updateValues, where, null) > 0;
     }
 
     public Cursor getAllSongs(String tableName) {

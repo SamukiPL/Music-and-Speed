@@ -10,8 +10,19 @@
         layout="@layout/tool_bar"/>
     <Button
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="New List"
+        android:layout_height="wrap_content"
+        android:text="@string/newList"
         android:onClick="newList"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/settings_listContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

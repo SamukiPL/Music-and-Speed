@@ -1,5 +1,6 @@
 package me.samuki.musicandspeed;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,17 +25,39 @@ import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 
 public class NewListActivity extends AppCompatActivity {
 
+    private String listName;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_list_activity);
+
+        if(savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                listName = "";
+            } else {
+                listName = extras.getString(MusicDbAdapter.KEY_NAME);
+            }
+        } else {
+            listName = (String) savedInstanceState.getSerializable(MusicDbAdapter.KEY_NAME);
+        }
+
         setToolbar();
         setAudioNamesList();
+        if (!listName.equals("")) {
+            EditText listNameEditText = (EditText) findViewById(R.id.settings_newListName);
+            listNameEditText.setText(listName);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.new_list_menu, menu);
+        if(listName.equals(""))
+            getMenuInflater().inflate(R.menu.new_list_menu, menu);
+        else
+            getMenuInflater().inflate(R.menu.edit_list_menu, menu);
+
         return true;
     }
 
@@ -75,7 +99,8 @@ public class NewListActivity extends AppCompatActivity {
                 (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setTitle(R.string.newList);
+        if(listName.equals("")) toolbar.setTitle(R.string.newList);
+            else  toolbar.setTitle(listName);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,14 +113,44 @@ public class NewListActivity extends AppCompatActivity {
     public void setAudioNamesList() {
         LayoutInflater inflater = getLayoutInflater();
 
+        Cursor songsInTheList = null;
+        MusicDbAdapter dbAdapter = null;
+        int count = 0;
+
+        if(!listName.equals("")) {
+            dbAdapter = new MusicDbAdapter(this);
+            dbAdapter.open();
+            songsInTheList = dbAdapter.getAllSongs(listName);
+            songsInTheList.moveToFirst();
+            count = songsInTheList.getCount();
+        }
+
         LinearLayout container = (LinearLayout) findViewById(R.id.settings_trackContainer);
 
         for (int i = 0; i < audioNames.size(); i++) {
             RelativeLayout trackRow = (RelativeLayout) inflater.inflate(R.layout.music_row_check_boxes, null);
-            TextView audioName = trackRow.findViewById(R.id.musicRow_audioTitle);
-            audioName.setText(audioNames.get(i));
+            TextView audioNameView = trackRow.findViewById(R.id.musicRow_audioTitle);
+            String audioName = audioNames.get(i);
+            audioNameView.setText(audioName);
             container.addView(trackRow);
-            Log.d(DEBUG_TAG, "TAK " + i);
+            if(songsInTheList != null && count > 0) {
+                String name = songsInTheList.getString(songsInTheList.getColumnIndex(MusicDbAdapter.KEY_NAME));
+                if(name.equals(audioName)) {
+                    CheckBox slowDrivingBox = trackRow.findViewById(R.id.musicRowCheckBoxes_slowDriving);
+                    CheckBox fastDrivingBox = trackRow.findViewById(R.id.musicRowCheckBoxes_fastDriving);
+                    slowDrivingBox.setChecked((songsInTheList.getInt(
+                            songsInTheList.getColumnIndex(MusicDbAdapter.KEY_SLOW_DRIVING)) == 1));
+                    fastDrivingBox.setChecked((songsInTheList.getInt(
+                            songsInTheList.getColumnIndex(MusicDbAdapter.KEY_FAST_DRIVING)) == 1));
+                    songsInTheList.moveToNext();
+                    count--;
+                }
+            }
+        }
+
+        if(songsInTheList != null) {
+            songsInTheList.close();
+            dbAdapter.close();
         }
     }
 

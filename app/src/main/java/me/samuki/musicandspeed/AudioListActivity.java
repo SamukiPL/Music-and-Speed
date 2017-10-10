@@ -40,8 +40,8 @@ public class AudioListActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     static boolean isPermission;
+    static LayoutInflater inflater;
 
-    private LayoutInflater inflater;
     private MusicService musicService;
     private boolean serviceDisconnected;
 
@@ -55,13 +55,14 @@ public class AudioListActivity extends AppCompatActivity {
         isPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         if(isPermission) setAudioNamesList(); else askForPermission();
-        setListsNamesList();
+        //setListsNamesList();
     }
 
     @Override
     protected void onResume() {
         Intent bindIntent = new Intent(this, MusicService.class);
         bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        setListsNamesList();
         super.onResume();
     }
 
@@ -226,8 +227,12 @@ public class AudioListActivity extends AppCompatActivity {
         cur.close();
     }
 
-    public void setListsNamesList() {
+    void setListsNamesList() {
         LinearLayout container = (LinearLayout) findViewById(R.id.listContainer);
+
+        while(container.getChildCount() > 1) {
+            container.removeViewAt(1);
+        }
 
         MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
         dbAdapter.open();
@@ -240,8 +245,14 @@ public class AudioListActivity extends AppCompatActivity {
             if(count > 0) {
                 while(tablesNames.moveToNext()) {
                     String name = tablesNames.getString(tablesNames.getColumnIndex(MusicDbAdapter.KEY_NAME));
-                    TextView listNameView = new TextView(this);
+                    TextView listNameView = (TextView)inflater.inflate(R.layout.list_row, null);
                     listNameView.setText(name);
+                    listNameView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(DEBUG_TAG, "Ruchanie!");
+                        }
+                    });
                     container.addView(listNameView);
                     Cursor tak = dbAdapter.getAllSongs(name);
                     int nie = 0;
