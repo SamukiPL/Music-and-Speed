@@ -14,13 +14,11 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RemoteViews;
 import android.widget.TextView;
@@ -34,7 +32,6 @@ public class MusicService extends Service {
     private final IBinder mBinder = new LocalBinder();
     private final int notifyID = 86;//NNNANI!! HACHIROKU!!!
 
-    static MediaPlayer mediaPlayer;
     static Location activityLocation;
     static boolean over50;
     static List<String> audioNames;
@@ -71,22 +68,25 @@ public class MusicService extends Service {
         super.onCreate();
         remoteViews = new RemoteViews(getPackageName(), R.layout.music_notification_layout);
 
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        playerManager = new MusicPlayerManager();
+
+        playerManager.mediaPlayer = new MediaPlayer();
+        playerManager.mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mediaPlayer.start();
+                playerManager.mediaPlayer.start();
             }
         });
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        playerManager.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Intent nextIntent = new Intent(context, MusicService.class);
                 nextIntent.setAction("Next");
+                if(!(over50 || playerManager.fastDrivingModeActive))
+                    playerManager.fastDrivingModeActive = false;
                 startService(nextIntent);
             }
         });
-        playerManager = new MusicPlayerManager();
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -313,7 +313,7 @@ public class MusicService extends Service {
         if(speed < 50) {
             if(over50) {
                 over50 = false;
-                if(playerManager.isPlaying)
+                if(playerManager.isPlaying && !playerManager.fastDrivingModeActive)
                     playerManager.changeVolumeUp();
             }
         }

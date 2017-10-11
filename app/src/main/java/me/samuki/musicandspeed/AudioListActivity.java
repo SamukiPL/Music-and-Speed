@@ -225,11 +225,14 @@ public class AudioListActivity extends AppCompatActivity {
             }
         }
 
+        //Tutaj trzeba wstawić ifa jeśli nasza apka ma pamiętać ostatnią graną listę
+        showAllAudioNames();
+
         assert cur != null;
         cur.close();
     }
 
-    public void hideAudioNames() {
+    public void showAllAudioNames() {
         slowDrivingSongs = new ArrayList<Integer>();
         fastDrivingSongs = new ArrayList<Integer>();
 
@@ -241,7 +244,7 @@ public class AudioListActivity extends AppCompatActivity {
         changeList(findViewById(R.id.musicListChooser));
     }
 
-    public void hideAudioNames(String tableName) {
+    public void showAllAudioNames(String tableName) {
         LinearLayout container = (LinearLayout) findViewById(R.id.musicContainer);
 
         slowDrivingSongs = new ArrayList<Integer>();
@@ -305,7 +308,7 @@ public class AudioListActivity extends AppCompatActivity {
                     listNameView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            hideAudioNames(name);
+                            showAllAudioNames(name);
                         }
                     });
                     container.addView(listNameView);
@@ -411,6 +414,6 @@ public class AudioListActivity extends AppCompatActivity {
     }
 
     public void changeToDefault(View view) {
-        hideAudioNames();
+        showAllAudioNames();
     }
 }
