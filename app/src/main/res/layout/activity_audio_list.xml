@@ -76,7 +76,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/defaultList"
                     android:textAlignment="center"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp"
+                    android:onClick="changeToDefault"/>
 
             </LinearLayout>
         </ScrollView>

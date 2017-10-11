@@ -39,6 +39,7 @@ public class MusicService extends Service {
     static boolean over50;
     static List<String> audioNames;
     static List<String> paths;
+    static List<Integer> slowDrivingSongs, fastDrivingSongs;
     static MusicPlayerManager playerManager;
 
     NotificationManager notificationManager;

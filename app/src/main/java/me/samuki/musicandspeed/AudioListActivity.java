@@ -27,13 +27,15 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static me.samuki.musicandspeed.MusicService.audioNames;
 import static me.samuki.musicandspeed.MusicService.paths;
+import static me.samuki.musicandspeed.MusicService.slowDrivingSongs;
+import static me.samuki.musicandspeed.MusicService.fastDrivingSongs;
 import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 
 public class AudioListActivity extends AppCompatActivity {
@@ -227,6 +229,59 @@ public class AudioListActivity extends AppCompatActivity {
         cur.close();
     }
 
+    public void hideAudioNames() {
+        slowDrivingSongs = new ArrayList<Integer>();
+        fastDrivingSongs = new ArrayList<Integer>();
+
+        LinearLayout container = (LinearLayout) findViewById(R.id.musicContainer);
+        for(int i = 0; i < container.getChildCount(); i++) {
+            container.getChildAt(i).setVisibility(View.VISIBLE);
+            slowDrivingSongs.add(i);
+        }
+        changeList(findViewById(R.id.musicListChooser));
+    }
+
+    public void hideAudioNames(String tableName) {
+        LinearLayout container = (LinearLayout) findViewById(R.id.musicContainer);
+
+        slowDrivingSongs = new ArrayList<Integer>();
+        fastDrivingSongs = new ArrayList<Integer>();
+
+        MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
+        dbAdapter.open();
+        Cursor songs = dbAdapter.getAllSongs(tableName);
+        songs.moveToFirst();
+        int count = 0;
+
+            for (int i = 0; i < container.getChildCount(); i++) {
+                RelativeLayout songView = (RelativeLayout) container.getChildAt(i);
+                if(count < songs.getCount()) {
+                    String songName = songs.getString(songs.getColumnIndex(MusicDbAdapter.KEY_NAME));
+                    String songNameFromView = ((TextView) songView.findViewById(R.id.musicRow_audioTitle))
+                            .getText().toString();
+                    if (!songName.equals(songNameFromView)
+                            && songView.getVisibility() == View.VISIBLE) {
+                        songView.setVisibility(View.GONE);
+                    } else if (songName.equals(songNameFromView)) {
+                        if(songs.getInt(songs.getColumnIndex(MusicDbAdapter.KEY_SLOW_DRIVING)) == 1)
+                            slowDrivingSongs.add(i);
+                        if(songs.getInt(songs.getColumnIndex(MusicDbAdapter.KEY_FAST_DRIVING)) == 1)
+                            fastDrivingSongs.add(i);
+                        songs.moveToNext();
+                        count++;
+                        if(songView.getVisibility() == View.GONE)
+                            songView.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    songView.setVisibility(View.GONE);
+                }
+            }
+        changeList(findViewById(R.id.musicListChooser));
+
+        dbAdapter.close();
+        songs.close();
+    }
+
     void setListsNamesList() {
         LinearLayout container = (LinearLayout) findViewById(R.id.listContainer);
 
@@ -244,13 +299,13 @@ public class AudioListActivity extends AppCompatActivity {
 
             if(count > 0) {
                 while(tablesNames.moveToNext()) {
-                    String name = tablesNames.getString(tablesNames.getColumnIndex(MusicDbAdapter.KEY_NAME));
+                    final String name = tablesNames.getString(tablesNames.getColumnIndex(MusicDbAdapter.KEY_NAME));
                     TextView listNameView = (TextView)inflater.inflate(R.layout.list_row, null);
                     listNameView.setText(name);
                     listNameView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Log.d(DEBUG_TAG, "Ruchanie!");
+                            hideAudioNames(name);
                         }
                     });
                     container.addView(listNameView);
@@ -353,5 +408,9 @@ public class AudioListActivity extends AppCompatActivity {
                 listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorListChooserChecked));
                 break;
         }
+    }
+
+    public void changeToDefault(View view) {
+        hideAudioNames();
     }
 }
