@@ -145,6 +145,10 @@
                             android:layout_weight="1"
                             android:contentDescription="@string/next"/>
                 </LinearLayout>
-
+                <TextView
+                    android:id="@+id/speedView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
         </RelativeLayout>
 </RelativeLayout>

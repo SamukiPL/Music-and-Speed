@@ -37,12 +37,14 @@ import static me.samuki.musicandspeed.MusicService.paths;
 import static me.samuki.musicandspeed.MusicService.slowDrivingSongs;
 import static me.samuki.musicandspeed.MusicService.fastDrivingSongs;
 import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
+import static me.samuki.musicandspeed.MusicService.speedToExceed;
 
 public class AudioListActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     static boolean isPermission;
     static LayoutInflater inflater;
+    static boolean audioListIsActive;
 
     private MusicService musicService;
     private boolean serviceDisconnected;
@@ -65,6 +67,8 @@ public class AudioListActivity extends AppCompatActivity {
         Intent bindIntent = new Intent(this, MusicService.class);
         bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         setListsNamesList();
+
+        audioListIsActive = true;
         super.onResume();
     }
 
@@ -81,23 +85,9 @@ public class AudioListActivity extends AppCompatActivity {
         });
     }
 
-    void setTitleAndProgressBar() {
+    void setProgressBar() {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.player_progressBar);
         MusicService.playerManager.setProgressBar(progressBar);
-        TextView titleView = (TextView) findViewById(R.id.player_trackTitle);
-        titleView.setText(audioNames.get(MusicService.playerManager.getActualMusicPlaying()));
-    }
-
-    void setPlayButton() {
-        ImageButton button = (ImageButton) findViewById(R.id.playButton);
-        if(MusicService.playerManager.isPlaying) {
-            button.setContentDescription(getString(R.string.stop));
-            button.setImageResource(android.R.drawable.ic_media_pause);
-        }
-        else {
-            button.setContentDescription(getString(R.string.play));
-            button.setImageResource(android.R.drawable.ic_media_play);
-        }
     }
 
     @Override
@@ -126,6 +116,7 @@ public class AudioListActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        audioListIsActive = false;
         if(musicService != null && serviceDisconnected)
             unbindService(serviceConnection);
         super.onDestroy();
@@ -137,8 +128,13 @@ public class AudioListActivity extends AppCompatActivity {
             Log.d(DEBUG_TAG, MusicService.playerManager.getActualMusicPlaying() + "");
             MusicService.LocalBinder binder = (MusicService.LocalBinder) iBinder;
             musicService = binder.getService();
-            setTitleAndProgressBar();
-            setPlayButton();
+
+            TextView speedView = (TextView) findViewById(R.id.speedView);
+            TextView titleView = (TextView) findViewById(R.id.player_trackTitle);
+            ImageButton button = (ImageButton) findViewById(R.id.playButton);
+
+            musicService.setSpeedViewAndTitleViewAndPlayButton(speedView, titleView, button);
+            setProgressBar();
             serviceDisconnected = false;
             //Tutaj musi być coś co ma się zrobić jeśli w tle cały czas działałą apka,
             // w sensie jakaś fajna metoda
@@ -244,7 +240,7 @@ public class AudioListActivity extends AppCompatActivity {
         changeList(findViewById(R.id.musicListChooser));
     }
 
-    public void showAllAudioNames(String tableName) {
+    public void hideAudioNames(String tableName) {
         LinearLayout container = (LinearLayout) findViewById(R.id.musicContainer);
 
         slowDrivingSongs = new ArrayList<Integer>();
@@ -294,7 +290,7 @@ public class AudioListActivity extends AppCompatActivity {
 
         MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
         dbAdapter.open();
-        Cursor tablesNames = dbAdapter.getAllTablesNames();
+        final Cursor tablesNames = dbAdapter.getAllTablesNames();
         int count = 0;
 
         if(tablesNames != null) {
@@ -303,32 +299,17 @@ public class AudioListActivity extends AppCompatActivity {
             if(count > 0) {
                 while(tablesNames.moveToNext()) {
                     final String name = tablesNames.getString(tablesNames.getColumnIndex(MusicDbAdapter.KEY_NAME));
+                    final int speed = tablesNames.getInt(tablesNames.getColumnIndex(MusicDbAdapter.KEY_SPEED));
                     TextView listNameView = (TextView)inflater.inflate(R.layout.list_row, null);
                     listNameView.setText(name);
                     listNameView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            showAllAudioNames(name);
+                            hideAudioNames(name);
+                            speedToExceed = speed;
                         }
                     });
                     container.addView(listNameView);
-                    Cursor tak = dbAdapter.getAllSongs(name);
-                    int nie = 0;
-                    if(tak != null) {
-                        nie = tak.getCount();
-                        if(nie > 0) {
-                            while(tak.moveToNext()) {
-                                String songName = tak.getString(tak.getColumnIndex(MusicDbAdapter.KEY_NAME));
-                                int slow = tak.getInt(tak.getColumnIndex(MusicDbAdapter.KEY_SLOW_DRIVING));
-                                int fast = tak.getInt(tak.getColumnIndex(MusicDbAdapter.KEY_FAST_DRIVING));
-
-                                Log.d(DEBUG_TAG, songName +": " + slow + " " + fast);
-                            }
-                        }
-                    }
-
-                    assert tak != null;
-                    tak.close();
                 }
 
             }

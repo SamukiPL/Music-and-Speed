@@ -33,7 +33,8 @@ public class MusicService extends Service {
     private final int notifyID = 86;//NNNANI!! HACHIROKU!!!
 
     static Location activityLocation;
-    static boolean over50;
+    static int speedToExceed;
+    static boolean overSpeed;
     static List<String> audioNames;
     static List<String> paths;
     static List<Integer> slowDrivingSongs, fastDrivingSongs;
@@ -82,7 +83,7 @@ public class MusicService extends Service {
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Intent nextIntent = new Intent(context, MusicService.class);
                 nextIntent.setAction("Next");
-                if(!(over50 || playerManager.fastDrivingModeActive))
+                if(!(overSpeed || playerManager.fastDrivingModeActive))
                     playerManager.fastDrivingModeActive = false;
                 startService(nextIntent);
             }
@@ -150,6 +151,10 @@ public class MusicService extends Service {
                 Intent pauseIntent = new Intent(this, MusicService.class);
                 pauseIntent.setAction("Pause");
                 PendingIntent pPauseIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
+                //RESTART INTENT
+                Intent restartIntent = new Intent(this, MusicService.class);
+                restartIntent.setAction("Restart");
+                PendingIntent pRestartIntent = PendingIntent.getService(this, 0, restartIntent, 0);
                 //NEXT INTENT
                 Intent nextIntent = new Intent(this, MusicService.class);
                 nextIntent.setAction("Next");
@@ -162,7 +167,10 @@ public class MusicService extends Service {
                 remoteViews.setOnClickPendingIntent(R.id.previous, pPreviousIntent);
                 remoteViews.setOnClickPendingIntent(R.id.next, pNextIntent);
                 remoteViews.setOnClickPendingIntent(R.id.close, pCloseIntent);
-                if(intent.getAction().equals("Start")) {
+                if(intent.getAction().equals("Start") ||
+                        playerManager.firstServicePlay &&
+                                !(intent.getAction().equals("Next") ||
+                                  intent.getAction().equals("Previous"))) {
                     int trackId = intent.getIntExtra("trackId", -1);
                     start(trackId);
                     remoteViews.setOnClickPendingIntent(R.id.pause, pPauseIntent);
@@ -175,38 +183,51 @@ public class MusicService extends Service {
                     remoteViews.setOnClickPendingIntent(R.id.pause, pPauseIntent);
                     remoteViews.setImageViewResource(R.id.pause, android.R.drawable.ic_media_pause);
 
+                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
+
                     notification = notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews).build();
 
                     notificationManager.notify(notifyID, notification);
+
                     restart();
+                    setPlayButtonOnNotification(pPauseIntent, pRestartIntent);
                 } else if (intent.getAction().equals("Previous")) {
                     previous();
 
+                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
+
                     notification = notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews).build();
 
                     notificationManager.notify(notifyID, notification);
+
+                    setPlayButtonOnNotification(pPauseIntent, pRestartIntent);
                 } else if (intent.getAction().equals("Pause")) {
-                    //START INTENT
-                    Intent restartIntent = new Intent(this, MusicService.class);
-                    restartIntent.setAction("Restart");
-                    PendingIntent pRestartIntent = PendingIntent.getService(this, 0, restartIntent, 0);
                     remoteViews.setOnClickPendingIntent(R.id.pause, pRestartIntent);
                     remoteViews.setImageViewResource(R.id.pause, android.R.drawable.ic_media_play);
+
+                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
 
                     notification = notificationBuilder.setContentIntent(pRestartIntent)
                             .setContent(remoteViews).build();
 
                     notificationManager.notify(notifyID, notification);
                     pause();
+
+                    setPlayButtonOnNotification(pPauseIntent, pRestartIntent);
                 } else if (intent.getAction().equals("Next")) {
                     next();
+
+                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
 
                     notification = notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews).build();
 
                     notificationManager.notify(notifyID, notification);
+
+
+                    setPlayButtonOnNotification(pPauseIntent, pRestartIntent);
                 } else if (intent.getAction().equals("Stop")) {
                     stop();
                     stopForeground(true);
@@ -241,6 +262,7 @@ public class MusicService extends Service {
                 playerManager.playMusic();
                 actualMusicPlayed = playerManager.getActualMusicPlaying();
             }
+            playerManager.firstServicePlay = false;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -270,9 +292,7 @@ public class MusicService extends Service {
 
     private void next() {
         try {
-            boolean tmpIsPlaying = playerManager.isPlaying;
-            playerManager.stopMusic();//This action gonna change the value of isPlaying!
-            playerManager.nextMusic(tmpIsPlaying);
+            playerManager.nextMusic(playerManager.isPlaying);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -284,6 +304,9 @@ public class MusicService extends Service {
 
     private void stop() {
         playerManager.stopMusic();
+        playerManager.firstServicePlay = true;
+        playButton.setContentDescription(getString(R.string.play));
+        playButton.setImageResource(android.R.drawable.ic_media_play);
     }
 
     public void updateSpeed() {
@@ -291,16 +314,16 @@ public class MusicService extends Service {
         if(activityLocation != null) {
             speed = activityLocation.getSpeed() * 3.6f;
             Log.d(DEBUG_TAG, activityLocation.getAccuracy() + " ");
-            if(speed < 40) {
-                if(over50) {
-                    over50 = false;
+            if(speed < speedToExceed) {
+                if(overSpeed) {
+                    overSpeed = false;
                     if(playerManager.isPlaying)
                         playerManager.changeVolumeUp();
                 }
             }
-            else if(speed > 40) {
-                if(!over50) {
-                    over50 = true;
+            else if(speed > speedToExceed) {
+                if(!overSpeed) {
+                    overSpeed = true;
                     if(playerManager.isPlaying)
                         playerManager.changeVolumeDown();
                 }
@@ -311,20 +334,31 @@ public class MusicService extends Service {
 
     private void updateSpeed(float speed) {
         if(speed < 50) {
-            if(over50) {
-                over50 = false;
+            if(overSpeed) {
+                overSpeed = false;
                 if(playerManager.isPlaying && !playerManager.fastDrivingModeActive)
                     playerManager.changeVolumeUp();
             }
         }
         else if(speed > 50) {
-            if(!over50) {
-                over50 = true;
+            if(!overSpeed) {
+                overSpeed = true;
                 if(playerManager.isPlaying)
                     playerManager.changeVolumeDown();
             }
         }
         speedView.setText(getString(R.string.current_speed, speed));
+    }
+
+    private void setPlayButtonOnNotification(PendingIntent pPauseIntent,
+                                             PendingIntent pRestartIntent) {
+        if (playerManager.isPlaying) {
+            remoteViews.setOnClickPendingIntent(R.id.pause, pPauseIntent);
+            remoteViews.setImageViewResource(R.id.pause, android.R.drawable.ic_media_pause);
+        } else {
+            remoteViews.setOnClickPendingIntent(R.id.pause, pRestartIntent);
+            remoteViews.setImageViewResource(R.id.pause, android.R.drawable.ic_media_play);
+        }
     }
 
     class LocalBinder extends Binder {

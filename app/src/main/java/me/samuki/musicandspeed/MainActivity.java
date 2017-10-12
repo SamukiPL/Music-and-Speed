@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.util.prefs.Preferences;
 
 public class MainActivity extends AppCompatActivity {
     public static final String DEBUG_TAG = "Debugujemy";
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         if(savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
-                trackId = 0;
+                trackId = -1;
                 playNewSong = false;
             } else {
                 trackId = extras.getInt("trackId");
@@ -60,7 +63,12 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                if(AudioListActivity.audioListIsActive)
+                    finish();
+                else {
+                    Intent intent = new Intent(getApplicationContext(), AudioListActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -82,11 +90,11 @@ public class MainActivity extends AppCompatActivity {
             if(!MusicService.playerManager.isPlaying && playNewSong) {
                 playMusic(trackId);
             } else {
-                if(trackId != -86 || playNewSong) {
+                if(MusicService.playerManager.isPlaying) {
                     button.setContentDescription(getString(R.string.stop));
                     button.setImageResource(android.R.drawable.ic_media_pause);
-                    if (trackId >= 0) playMusic(trackId);
                 }
+                if (trackId >= 0) playMusic(trackId);
             }
             MusicService.playerManager.setProgressBar((ProgressBar)findViewById(R.id.progressBar));
             //Tutaj musi być coś co ma się zrobić jeśli w tle cały czas działałą apka,
@@ -121,7 +129,14 @@ public class MainActivity extends AppCompatActivity {
     public void playMusic(View view) {
         ImageButton button = (ImageButton) view;
         if(button.getContentDescription().equals(getString(R.string.play))) {
-            restartMusicService();
+            SharedPreferences prefs = this.getSharedPreferences(
+                    getString(R.string.sharedPreferences), Context.MODE_PRIVATE);
+            int lastPlayedSongEver = prefs.getInt(getString(
+                                     R.string.sharedPreferences_lastPlayedSongEver), 0);
+            if(MusicService.playerManager.firstServicePlay)
+                startMusicService(lastPlayedSongEver);
+            else
+                restartMusicService();
             button.setContentDescription(getString(R.string.stop));
             button.setImageResource(android.R.drawable.ic_media_pause);
         }

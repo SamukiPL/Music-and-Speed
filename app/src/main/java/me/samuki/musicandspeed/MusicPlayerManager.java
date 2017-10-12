@@ -33,6 +33,7 @@ class MusicPlayerManager {
     private ProgressBar progressBar;
 
     boolean isPlaying;
+    boolean firstServicePlay;
     boolean fastDrivingModeActive;
 
     int getActualMusicPlaying() {
@@ -61,6 +62,7 @@ class MusicPlayerManager {
     MusicPlayerManager() {
         isTimerRunning = false;
         setLastMusicPlayed();
+        firstServicePlay = true;
     }
 
     void playMusic() throws IOException  {
@@ -106,6 +108,8 @@ class MusicPlayerManager {
     }
 
     void nextMusic(boolean isPlaying) throws IOException {
+        stopMusic();
+
         Random random = new Random(); //AccessFile
         int listIndex = 0;
         int playThatOne = 0;

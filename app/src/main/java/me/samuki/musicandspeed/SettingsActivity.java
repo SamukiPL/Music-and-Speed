@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     void setListsNamesList() {
-        LinearLayout container = (LinearLayout) findViewById(R.id.settings_listContainer);
+        final LinearLayout container = (LinearLayout) findViewById(R.id.settings_listContainer);
 
         while(container.getChildCount() > 0) {
             container.removeViewAt(0);
@@ -64,7 +65,10 @@ public class SettingsActivity extends AppCompatActivity {
                             tablesNames.getColumnIndex(MusicDbAdapter.KEY_NAME));
                     final int speed = tablesNames.getInt(
                             tablesNames.getColumnIndex(MusicDbAdapter.KEY_SPEED));
-                    TextView listNameView = (TextView)inflater.inflate(R.layout.list_row, null);
+                    final LinearLayout listNameContainer = (LinearLayout) inflater.inflate(
+                                                        R.layout.list_row_settings, null);
+                    TextView listNameView = (TextView) listNameContainer.findViewById(
+                                                        R.id.listRow_listName);
                     listNameView.setText(name);
                     listNameView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -76,7 +80,15 @@ public class SettingsActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-                    container.addView(listNameView);
+                    ImageView listNameDeletionSign = (ImageView) listNameContainer.findViewById(
+                                                                    R.id.listRow_deletionSign);
+                    listNameContainer.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            deleteList(name, listNameContainer);
+                        }
+                    });
+                    container.addView(listNameContainer);
                 }
             }
         }
@@ -90,5 +102,14 @@ public class SettingsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NewListActivity.class);
         intent.putExtra(MusicDbAdapter.KEY_NAME, "");
         startActivity(intent);
+    }
+
+    public void deleteList(String listName, LinearLayout listNameContainer) {
+        MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
+        dbAdapter.open();
+        dbAdapter.deleteTableName(listName);
+        dbAdapter.dropTable(listName);
+        dbAdapter.close();
+        listNameContainer.setVisibility(View.GONE);
     }
 }

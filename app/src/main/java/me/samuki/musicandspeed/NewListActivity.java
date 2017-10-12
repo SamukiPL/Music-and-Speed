@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,6 +55,7 @@ public class NewListActivity extends AppCompatActivity {
 
         EditText listNameEditText = (EditText) findViewById(R.id.settings_newListName);
         listNameEditText.setText(listName);
+        setValidationForEditText(listNameEditText);
     }
 
     @Override
@@ -225,5 +228,31 @@ public class NewListActivity extends AppCompatActivity {
                 fastDrivingList.add(fastDrivingChecked);
             }
         }
+    }
+
+    private void setValidationForEditText(final EditText editText) {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(charSequence.toString().contains("\"")) {
+                    editText.setText(charSequence.toString().replace("\"", ""));
+                    editText.setSelection(editText.getText().length());
+                } else if (charSequence.toString().contains("\'")) {
+                    editText.setText(charSequence.toString().replace("\'", ""));
+                    editText.setSelection(editText.getText().length());
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 }
