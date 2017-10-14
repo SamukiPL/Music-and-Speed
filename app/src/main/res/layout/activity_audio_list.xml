@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="me.samuki.musicandspeed.MainActivity" >
+    tools:context="me.samuki.musicandspeed.MainActivity"
+    android:background="@color/colorAudioListRowBackground">
     <include
         android:id="@+id/activityToolbar"
         layout="@layout/tool_bar"/>
@@ -24,7 +25,7 @@
                 android:text="Songs"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:background="@color/colorListChooserChecked"
+                android:background="@color/colorAudioListChooserChecked"
                 android:onClick="changeList"/>
             <TextView
                 android:id="@+id/listsListChooser"
@@ -34,7 +35,7 @@
                 android:text="Lists"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:background="@color/colorListChooserUnchecked"
+                android:background="@color/colorAudioListChooserUnchecked"
                 android:onClick="changeList"/>
     </LinearLayout>
     <LinearLayout
@@ -87,6 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_alignParentBottom="true"
+            android:background="@color/colorAudioListPlayerBackground"
             android:onClick="goToMainActivity">
                 <ProgressBar
                     android:id="@+id/player_progressBar"

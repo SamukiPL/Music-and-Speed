@@ -4,8 +4,11 @@
     <color name="colorPrimaryDark">#18191b</color>
     <color name="colorAccent">#be0411</color>
 
-    <color name="colorListChooserChecked">#e4e4e4</color>
-    <color name="colorListChooserUnchecked">#a2a5a6</color>
+    <color name="colorAudioListChooserChecked">#f7f9fa</color>
+    <color name="colorAudioListChooserUnchecked">#a2a5a6</color>
+    <color name="colorAudioListRowBackground">#f7f9fa</color>
+    <color name="colorAudioListBackground">#e4e4e4</color>
+    <color name="colorAudioListPlayerBackground">#f0f1f2</color>
 
     <color name="white">#FFF</color>
     <color name="green">#00ff15</color>

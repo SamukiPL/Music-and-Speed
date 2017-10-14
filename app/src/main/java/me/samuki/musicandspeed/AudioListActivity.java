@@ -16,11 +16,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -72,22 +75,19 @@ public class AudioListActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    void setToolbar() {
-        android.support.v7.widget.Toolbar toolbar =
-            (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+    @Override
+    protected void onPause() {
+        if(musicService != null)
+            unbindService(serviceConnection);
+        super.onPause();
     }
 
-    void setProgressBar() {
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.player_progressBar);
-        MusicService.playerManager.setProgressBar(progressBar);
+    @Override
+    protected void onDestroy() {
+        audioListIsActive = false;
+        if(musicService != null && serviceDisconnected)
+            unbindService(serviceConnection);
+        super.onDestroy();
     }
 
     @Override
@@ -108,18 +108,28 @@ public class AudioListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        if(musicService != null)
-            unbindService(serviceConnection);
-        super.onPause();
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.d(DEBUG_TAG, String.valueOf(event.getAction()));
+
+        return super.onTouchEvent(event);
     }
 
-    @Override
-    protected void onDestroy() {
-        audioListIsActive = false;
-        if(musicService != null && serviceDisconnected)
-            unbindService(serviceConnection);
-        super.onDestroy();
+    void setToolbar() {
+        android.support.v7.widget.Toolbar toolbar =
+            (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    void setProgressBar() {
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.player_progressBar);
+        MusicService.playerManager.setProgressBar(progressBar);
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -201,7 +211,7 @@ public class AudioListActivity extends AppCompatActivity {
                     audioNames.add(name);
                     String path = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DATA));
                     paths.add(path);
-                    RelativeLayout musicRow = (RelativeLayout) inflater.inflate(R.layout.music_row, null);
+                    LinearLayout musicRow = (LinearLayout) inflater.inflate(R.layout.music_row, null);
                     TextView nameView = musicRow.findViewById(R.id.musicRow_audioTitle);
                     TextView artistView = musicRow.findViewById(R.id.musicRow_audioArtist);
                     TextView durationView = musicRow.findViewById(R.id.musicRow_audioDuration);
@@ -253,7 +263,7 @@ public class AudioListActivity extends AppCompatActivity {
         int count = 0;
 
             for (int i = 0; i < container.getChildCount(); i++) {
-                RelativeLayout songView = (RelativeLayout) container.getChildAt(i);
+                LinearLayout songView = (LinearLayout) container.getChildAt(i);
                 if(count < songs.getCount()) {
                     String songName = songs.getString(songs.getColumnIndex(MusicDbAdapter.KEY_NAME));
                     String songNameFromView = ((TextView) songView.findViewById(R.id.musicRow_audioTitle))
@@ -381,15 +391,15 @@ public class AudioListActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.musicListChooser:
                 songsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0f));
-                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorListChooserChecked));
+                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAudioListChooserChecked));
                 listsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorListChooserUnchecked));
+                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAudioListChooserUnchecked));
                 break;
             case R.id.listsListChooser:
                 songsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorListChooserUnchecked));
+                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAudioListChooserUnchecked));
                 listsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0f));
-                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorListChooserChecked));
+                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAudioListChooserChecked));
                 break;
         }
     }
