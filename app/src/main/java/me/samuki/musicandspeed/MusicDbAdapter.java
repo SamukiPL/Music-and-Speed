@@ -120,6 +120,15 @@ class MusicDbAdapter {
         return db.query(LISTS_NAMES_TABLE, columns, null, null, null, null, null);
     }
 
+    boolean isNameExist(String tableName) {
+        String query =  "SELECT * FROM " + LISTS_NAMES_TABLE +
+                " WHERE " + KEY_NAME + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[] {tableName});
+        boolean result = cursor.getCount() > 0;
+        cursor.close();
+        return result;
+    }
+
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
         public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {

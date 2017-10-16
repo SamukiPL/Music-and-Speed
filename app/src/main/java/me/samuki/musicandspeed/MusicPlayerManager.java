@@ -24,7 +24,7 @@ class MusicPlayerManager {
 
     private CountDownTimer volumeTimer, durationTimer;
     private int duration, currentPosition;
-    private boolean isTimerRunning;
+    private boolean isTimerRunning, isDurationTimerRunning;
     private long timeLeftToChangeVolume;
     private int lastMusicPlayed[];
     private int remembered;
@@ -41,9 +41,14 @@ class MusicPlayerManager {
     }
     void setProgressBar(final ProgressBar progressBar) {
         this.progressBar = progressBar;
-        if(durationTimer != null) {
-            durationTimer.cancel();
+        if(!firstServicePlay)
             currentPosition = mediaPlayer.getCurrentPosition();
+        else {
+            duration = 0;
+            currentPosition = 0;
+        }
+        if (isDurationTimerRunning && isPlaying) {
+            durationTimer.cancel();
             progressBar.setMax(duration);
             durationTimer = new CountDownTimer(duration - currentPosition, 1000) {
                 @Override
@@ -54,8 +59,14 @@ class MusicPlayerManager {
                 @Override
                 public void onFinish() {
                     progressBar.setProgress(duration);
+                    isDurationTimerRunning = false;
                 }
             }.start();
+        } else if(!isPlaying) {
+            if(isDurationTimerRunning)
+                durationTimer.cancel();
+            progressBar.setMax(duration);
+            progressBar.setProgress(currentPosition);
         }
     }
 
@@ -141,6 +152,8 @@ class MusicPlayerManager {
         if(pausedOn == actualMusicPlaying) {
             mediaPlayer.start();
             isPlaying = true;
+            if (isDurationTimerRunning)
+                durationTimer.cancel();
             durationTimer = new CountDownTimer(duration - currentPosition, 1000) {
                 @Override
                 public void onTick(long l) {
@@ -150,8 +163,10 @@ class MusicPlayerManager {
                 @Override
                 public void onFinish() {
                     progressBar.setProgress(duration);
+                    isDurationTimerRunning = false;
                 }
             }.start();
+            isDurationTimerRunning = true;
         }
         else {
             try {
@@ -281,6 +296,8 @@ class MusicPlayerManager {
         String durationString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
         duration = Integer.parseInt(durationString);
         progressBar.setMax(duration);
+        if (isDurationTimerRunning)
+            durationTimer.cancel();
         durationTimer = new CountDownTimer(duration, 1000) {
             @Override
             public void onTick(long l) {
@@ -290,7 +307,9 @@ class MusicPlayerManager {
             @Override
             public void onFinish() {
                 progressBar.setProgress(duration);
+                isDurationTimerRunning = false;
             }
         }.start();
+        isDurationTimerRunning = true;
     }
 }

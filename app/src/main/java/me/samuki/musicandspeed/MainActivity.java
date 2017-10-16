@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     Intent intent = new Intent(getApplicationContext(), AudioListActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });

@@ -72,7 +72,6 @@ public class NewListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addList:
-
                 TextView newListNameView = (TextView) findViewById(R.id.settings_newListName);
                 String newListName = newListNameView.getText().toString();
                 int speed = getSpeed();
@@ -80,10 +79,13 @@ public class NewListActivity extends AppCompatActivity {
                 List<Boolean> slowDrivingList = new ArrayList<Boolean>();
                 List<Boolean> fastDrivingList = new ArrayList<Boolean>();
                 getCheckedSongs(songsNamesList, slowDrivingList, fastDrivingList);
-                if(!newListName.equals("") && speed > 0 && songsNamesList.size() > 0) {
+                if (    !newListName.equals("")
+                        && speed > 0
+                        && songsNamesList.size() > 0) {
                     MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
                     dbAdapter.open();
-                    if (!listName.equals("")) {
+                    if (dbAdapter.isNameExist(newListName)) {
+                        //Trzeba dodać alert sprawdzający pewność użytkownika.
                         dbAdapter.dropTable(listName);
                         dbAdapter.deleteTableName(listName);
                     }

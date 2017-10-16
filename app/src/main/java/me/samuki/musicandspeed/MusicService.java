@@ -30,7 +30,7 @@ import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 
 public class MusicService extends Service {
     private final IBinder mBinder = new LocalBinder();
-    private final int notifyID = 86;//NNNANI!! HACHIROKU!!!
+    private final int notifyID = 1;//NNNANI!! HACHIROKU!!!
 
     static Location activityLocation;
     static int speedToExceed;
@@ -56,6 +56,14 @@ public class MusicService extends Service {
         this.titleView = titleView;
         this.titleView.setText(audioNames.get(playerManager.getActualMusicPlaying()));
         this.playButton = playButton;
+        if(playerManager.isPlaying) {
+            playButton.setContentDescription(getString(R.string.stop));
+            playButton.setImageResource(android.R.drawable.ic_media_pause);
+        }
+        else {
+            playButton.setContentDescription(getString(R.string.play));
+            playButton.setImageResource(android.R.drawable.ic_media_play);
+        }
     }
 
     @Nullable
