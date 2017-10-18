@@ -7,11 +7,11 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="42dp"
         android:background="?attr/colorPrimary"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:textSize="24sp"
+        android:textSize="12sp"
         app:titleTextAppearance="@style/Toolbar.TitleText"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">

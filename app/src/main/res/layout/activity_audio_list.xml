@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="me.samuki.musicandspeed.MainActivity"
-    android:background="@color/colorAudioListRowBackground">
+    android:background="@color/colorAudioListBackground">
     <include
         android:id="@+id/activityToolbar"
         layout="@layout/tool_bar"/>
@@ -17,26 +17,40 @@
         android:layout_below="@id/activityToolbar"
         android:orientation="horizontal"
         android:weightSum="2">
+        <LinearLayout
+            android:id="@+id/musicListChooser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:paddingBottom="5dp"
+            android:onClick="changeList">
             <TextView
-                android:id="@+id/musicListChooser"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
                 android:text="Songs"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:background="@color/colorAudioListChooserChecked"
-                android:onClick="changeList"/>
-            <TextView
-                android:id="@+id/listsListChooser"
+                android:textColor="@color/white"
+                android:background="@color/colorPrimary"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/listsListChooser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="5dp"
+            android:onClick="changeList">
+        <TextView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+            android:layout_height="32dp"
                 android:layout_weight="1"
                 android:text="Lists"
                 android:textAlignment="center"
                 android:textSize="18sp"
-                android:background="@color/colorAudioListChooserUnchecked"
-                android:onClick="changeList"/>
+                android:textColor="@color/white"
+                android:background="@color/colorPrimary"/>
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -89,63 +103,82 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_alignParentBottom="true"
             android:background="@color/colorAudioListPlayerBackground"
+            android:paddingLeft="3dp"
+            android:paddingStart="3dp"
+            android:paddingRight="3dp"
+            android:paddingEnd="3dp"
             android:onClick="goToMainActivity">
                 <ProgressBar
                     android:id="@+id/player_progressBar"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="6dp"/>
-                <ImageView
-                    android:id="@+id/player_albumCover"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:layout_below="@id/player_progressBar"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:src="@drawable/default_album_cover"
-                    android:contentDescription="@string/albumCover"/>
                 <TextView
                     android:id="@+id/player_trackTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/player_progressBar"
-                    android:layout_toRightOf="@id/player_albumCover"
-                    android:layout_toEndOf="@id/player_albumCover"
-                    android:gravity="center"/>
+                    android:layout_toLeftOf="@+id/playerButtons"
+                    android:layout_toStartOf="@+id/playerButtons"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:gravity="left"
+                    android:textColor="@color/white"/>
+            <TextView
+                android:id="@+id/player_trackAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/player_trackTitle"
+                android:layout_toLeftOf="@+id/playerButtons"
+                android:layout_toStartOf="@+id/playerButtons"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:gravity="left"
+                android:text="AUTHOR!!!"
+                android:textColor="@color/white"/>
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/playerButtons"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
-                    android:layout_toRightOf="@id/player_albumCover"
-                    android:layout_toEndOf="@id/player_albumCover"
-                    android:layout_below="@id/player_trackTitle"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toLeftOf="@id/playerButtons"
+                    android:layout_toStartOf="@id/playerButtons"
                     android:weightSum="3">
 
                         <ImageButton
                             android:id="@+id/previousButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:src="@android:drawable/ic_media_previous"
-                            android:onClick="previousMusic"
                             android:layout_weight="1"
-                            android:contentDescription="@string/previous"/>
+                            android:src="@android:drawable/ic_media_previous"
+                            android:layout_gravity="center"
+                            android:onClick="previousMusic"
+                            android:contentDescription="@string/previous"
+                            android:background="@android:color/transparent"/>
                         <ImageButton
                             android:id="@+id/playButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:src="@android:drawable/ic_media_play"
+                            android:layout_gravity="center"
                             android:text="@string/play"
                             android:onClick="playMusic"
-                            android:layout_weight="1"
-                            android:contentDescription="@string/play"/>
+                            android:contentDescription="@string/play"
+                            android:background="@android:color/transparent"/>
                         <ImageButton
                             android:id="@+id/nextButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:src="@android:drawable/ic_media_next"
-                            android:onClick="nextMusic"
                             android:layout_weight="1"
-                            android:contentDescription="@string/next"/>
+                            android:src="@android:drawable/ic_media_next"
+                            android:layout_gravity="center"
+                            android:onClick="nextMusic"
+                            android:contentDescription="@string/next"
+                            android:background="@android:color/transparent"/>
                 </LinearLayout>
                 <TextView
                     android:id="@+id/speedView"

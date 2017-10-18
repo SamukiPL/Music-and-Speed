@@ -30,7 +30,7 @@ import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 
 public class MusicService extends Service {
     private final IBinder mBinder = new LocalBinder();
-    private final int notifyID = 1;//NNNANI!! HACHIROKU!!!
+    private final int notifyID = 86;//NNNANI!! HACHIROKU!!!
 
     static Location activityLocation;
     static int speedToExceed;

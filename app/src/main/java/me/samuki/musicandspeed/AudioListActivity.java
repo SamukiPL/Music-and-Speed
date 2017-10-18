@@ -212,6 +212,10 @@ public class AudioListActivity extends AppCompatActivity {
                     String path = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DATA));
                     paths.add(path);
                     LinearLayout musicRow = (LinearLayout) inflater.inflate(R.layout.music_row, null);
+                    //LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) new LinearLayout.LayoutParams(
+                    //        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    //params.setMargins(20, 10, 20, 10);
+                    //musicRow.setLayoutParams(params);
                     TextView nameView = musicRow.findViewById(R.id.musicRow_audioTitle);
                     TextView artistView = musicRow.findViewById(R.id.musicRow_audioArtist);
                     TextView durationView = musicRow.findViewById(R.id.musicRow_audioDuration);
@@ -391,15 +395,15 @@ public class AudioListActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.musicListChooser:
                 songsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0f));
-                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAudioListChooserChecked));
+                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
                 listsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAudioListChooserUnchecked));
+                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
                 break;
             case R.id.listsListChooser:
                 songsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
-                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAudioListChooserUnchecked));
+                songsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
                 listsList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0f));
-                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAudioListChooserChecked));
+                listsListChooser.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
                 break;
         }
     }
