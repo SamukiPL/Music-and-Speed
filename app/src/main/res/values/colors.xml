@@ -10,6 +10,7 @@
     <color name="colorAudioListPlayerBackground">#18191b</color>
 
     <color name="white">#FFF</color>
+    <color name="black">#33000000</color>
     <color name="green">#00ff15</color>
     <color name="yellow">#ffdd00</color>
     <color name="red">#ff0000</color>

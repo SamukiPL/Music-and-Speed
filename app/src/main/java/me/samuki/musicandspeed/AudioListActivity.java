@@ -211,11 +211,11 @@ public class AudioListActivity extends AppCompatActivity {
                     audioNames.add(name);
                     String path = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DATA));
                     paths.add(path);
-                    LinearLayout musicRow = (LinearLayout) inflater.inflate(R.layout.music_row, null);
-                    //LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) new LinearLayout.LayoutParams(
-                    //        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    //params.setMargins(20, 10, 20, 10);
-                    //musicRow.setLayoutParams(params);
+                    LinearLayout musicRow;
+                    if (!cur.isLast())
+                        musicRow = (LinearLayout) inflater.inflate(R.layout.music_row, null);
+                    else
+                        musicRow = (LinearLayout) inflater.inflate(R.layout.music_row_last_element, null);
                     TextView nameView = musicRow.findViewById(R.id.musicRow_audioTitle);
                     TextView artistView = musicRow.findViewById(R.id.musicRow_audioArtist);
                     TextView durationView = musicRow.findViewById(R.id.musicRow_audioDuration);
