@@ -146,7 +146,7 @@ public class MusicService extends Service {
 
                 notificationBuilder = new NotificationCompat.Builder(this)
                         .setContentText("Music")
-                        .setSmallIcon(R.drawable.default_album_cover)
+                        .setSmallIcon(R.drawable.initial_music_logo_alpha_transparent)
                         .setOngoing(true);
                 //NOTIFICATION INTENT
                 Intent notificationIntent = new Intent(this, MainActivity.class);
