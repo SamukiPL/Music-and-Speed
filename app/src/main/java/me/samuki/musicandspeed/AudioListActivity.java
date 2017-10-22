@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -17,7 +18,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -107,16 +110,9 @@ public class AudioListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        Log.d(DEBUG_TAG, String.valueOf(event.getAction()));
-
-        return super.onTouchEvent(event);
-    }
-
     void setToolbar() {
-        android.support.v7.widget.Toolbar toolbar =
-            (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar =
+            (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -216,6 +212,7 @@ public class AudioListActivity extends AppCompatActivity {
                         musicRow = (LinearLayout) inflater.inflate(R.layout.music_row, null);
                     else
                         musicRow = (LinearLayout) inflater.inflate(R.layout.music_row_last_element, null);
+                    musicRow.setOnTouchListener(new MyGestureListener());
                     TextView nameView = musicRow.findViewById(R.id.musicRow_audioTitle);
                     TextView artistView = musicRow.findViewById(R.id.musicRow_audioArtist);
                     TextView durationView = musicRow.findViewById(R.id.musicRow_audioDuration);
@@ -410,5 +407,49 @@ public class AudioListActivity extends AppCompatActivity {
 
     public void changeToDefault(View view) {
         showAllAudioNames();
+    }
+
+    private class MyGestureListener implements View.OnTouchListener {
+        private final float MIN_DISTANCE = 0.5f;
+        private float downX, downY, upX, upY;
+
+        private boolean leftToRightSwipe() {
+            Log.d(DEBUG_TAG, "SWIPE LEFT!!!");
+            return true;
+        }
+
+        private boolean rightToLeftSwipe() {
+            Log.d(DEBUG_TAG, "SWIPE RIGHT!!!");
+            return true;
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    downX = motionEvent.getX();
+                    downY = motionEvent.getY();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    upX = motionEvent.getX();
+                    upY = motionEvent.getY();
+
+                    float deltaX = downX - upX;
+                    float deltaY = downY - upY;
+
+                    if (Math.abs(deltaX) > MIN_DISTANCE) {
+                        if(deltaX > 0)
+                            return rightToLeftSwipe();
+                        else
+                            return leftToRightSwipe();
+                    }
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.d(DEBUG_TAG, String.valueOf(motionEvent.getX()));
+                    return false;
+            }
+
+            return false;
+        }
     }
 }

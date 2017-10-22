@@ -28,11 +28,11 @@
             android:onClick="changeList">
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
+                android:layout_height="50dp"
                 android:text="Songs"
-                android:textAlignment="center"
                 android:textSize="18sp"
                 android:textColor="@color/white"
+                android:gravity="center"
                 android:background="@color/colorPrimary"/>
         </LinearLayout>
         <LinearLayout
@@ -42,18 +42,19 @@
             android:layout_weight="1"
             android:paddingBottom="5dp"
             android:onClick="changeList">
-        <TextView
+            <TextView
                 android:layout_width="0dp"
-            android:layout_height="32dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:text="Lists"
-                android:textAlignment="center"
                 android:textSize="18sp"
                 android:textColor="@color/white"
+                android:gravity="center"
                 android:background="@color/colorPrimary"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/lists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
