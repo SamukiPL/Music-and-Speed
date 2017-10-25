@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -65,6 +66,12 @@ public class SettingsActivity extends AppCompatActivity {
                             tablesNames.getColumnIndex(MusicDbAdapter.KEY_SPEED));
                     final LinearLayout listNameContainer = (LinearLayout) inflater.inflate(
                                                         R.layout.list_row_settings, null);
+
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    params.setMargins(0, 0, 0, 20);
+                    listNameContainer.setLayoutParams(params);
+
                     TextView listNameView = listNameContainer.findViewById(
                                                         R.id.listRow_listName);
                     listNameView.setText(name);

@@ -13,6 +13,7 @@
     <color name="white">#FFF</color>
     <color name="black">#000000</color>
     <color name="blackAlpha20">#33000000</color>
+    <color name="accentAlpha20">#33be0411</color>
     <color name="green">#00ff15</color>
     <color name="yellow">#ffdd00</color>
     <color name="red">#ff0000</color>

@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
@@ -29,7 +31,9 @@ public class AudioListFragment extends Fragment {
     private static LinearLayout audioContainer;
 
     private LayoutInflater inflater;
-    private View songsListChooser;
+    private LinearLayout songsListChooser;
+    private View viewForListsListFragment;
+    private boolean listsListAlreadyRunning = false;
 
     @Nullable
     @Override
@@ -46,10 +50,20 @@ public class AudioListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(position++ == 0)
+        if (position++ == 0)
             fillAudioContainer(view);
-        else
+        else {
             fillListContainer(view);
+            viewForListsListFragment = view;
+            listsListAlreadyRunning = true;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(listsListAlreadyRunning)
+            fillListContainer(viewForListsListFragment);
     }
 
     private void fillAudioContainer(View view) {
@@ -137,6 +151,9 @@ public class AudioListFragment extends Fragment {
 
     private void fillListContainer(View view) {
         LinearLayout container = view.findViewById(R.id.container);
+        if (container.getChildCount() > 0)
+            container.removeAllViews();
+
         //DEFAULT LIST
         LinearLayout listRowDefault = (LinearLayout) inflater.inflate(R.layout.list_row, null);
         TextView listNameViewDefault = listRowDefault.findViewById(R.id.listRow_listName);
@@ -144,6 +161,8 @@ public class AudioListFragment extends Fragment {
         listNameViewDefault.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((TextView)songsListChooser.getChildAt(0))
+                        .setText(getString(R.string.defaultList));
                 songsListChooser.callOnClick();
                 showAllAudioNames();
                 speedToExceed = 30;
@@ -173,6 +192,7 @@ public class AudioListFragment extends Fragment {
                     listNameView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            ((TextView)songsListChooser.getChildAt(0)).setText(name);
                             songsListChooser.callOnClick();
                             hideAudioNames(name);
                             speedToExceed = speed;

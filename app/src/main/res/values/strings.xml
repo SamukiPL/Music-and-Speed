@@ -22,6 +22,11 @@
     <string name="sharedPreferences_lastPlayedSongEver">LAST_SONG_EVER</string>
     <string name="songs">Songs</string>
     <string name="lists">Lists</string>
+    <string name="listsNames">Lists names</string>
     <string name="author">Author</string>
     <string name="speed">Speed</string>
+
+    <string name="useGlobalSpeed">Use global speed</string>
+    <string name="globalSpeedText">Global speed</string>
+    <string name="globalSpeed">70</string>
 </resources>
