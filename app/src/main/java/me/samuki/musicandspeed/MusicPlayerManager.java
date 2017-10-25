@@ -3,16 +3,14 @@ package me.samuki.musicandspeed;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.widget.ProgressBar;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
-import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 import static me.samuki.musicandspeed.MusicService.fastDrivingSongs;
-import static me.samuki.musicandspeed.MusicService.paths;
+import static me.samuki.musicandspeed.MusicService.audioPaths;
 import static me.samuki.musicandspeed.MusicService.slowDrivingSongs;
 
 class MusicPlayerManager {
@@ -80,7 +78,7 @@ class MusicPlayerManager {
         Random random = new Random(); //AccessFile
         int listIndex = random.nextInt(slowDrivingSongs.size());
         int playThatOne = slowDrivingSongs.get(listIndex);
-        String path = paths.get(playThatOne);
+        String path = audioPaths.get(playThatOne);
 
         mediaPlayer.setDataSource(path);
         mediaPlayer.prepareAsync();
@@ -92,7 +90,7 @@ class MusicPlayerManager {
 
     void playMusic(int whichMusic, boolean previous) throws IOException {
         stopMusic();
-        String path = paths.get(whichMusic);
+        String path = audioPaths.get(whichMusic);
         mediaPlayer.setDataSource(path);
         mediaPlayer.prepareAsync();
         isPlaying = true;
@@ -107,7 +105,7 @@ class MusicPlayerManager {
         Random random = new Random(); //AccessFile
         int listIndex = random.nextInt(fastDrivingSongs.size());
         int playThatOne = fastDrivingSongs.get(listIndex);
-        String path = paths.get(playThatOne);
+        String path = audioPaths.get(playThatOne);
 
         mediaPlayer.setDataSource(path);
         mediaPlayer.prepareAsync();
@@ -122,8 +120,8 @@ class MusicPlayerManager {
         stopMusic();
 
         Random random = new Random(); //AccessFile
-        int listIndex = 0;
-        int playThatOne = 0;
+        int listIndex;
+        int playThatOne;
         if(!fastDrivingModeActive) {
             listIndex = random.nextInt(slowDrivingSongs.size());
             playThatOne = slowDrivingSongs.get(listIndex);
@@ -141,7 +139,7 @@ class MusicPlayerManager {
 
     private void playLastMusic() throws IOException {
         actualMusicPlaying = getLastOnePlayed();
-        String path = paths.get(actualMusicPlaying);
+        String path = audioPaths.get(actualMusicPlaying);
         mediaPlayer.setDataSource(path);
         mediaPlayer.prepareAsync();
         isPlaying = true;

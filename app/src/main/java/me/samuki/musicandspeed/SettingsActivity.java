@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 import static me.samuki.musicandspeed.AudioListActivity.inflater;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -55,7 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
         final MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
         dbAdapter.open();
         Cursor tablesNames = dbAdapter.getAllTablesNames();
-        int count = 0;
+        int count;
 
         if(tablesNames != null) {
             count = tablesNames.getCount();
@@ -67,7 +65,7 @@ public class SettingsActivity extends AppCompatActivity {
                             tablesNames.getColumnIndex(MusicDbAdapter.KEY_SPEED));
                     final LinearLayout listNameContainer = (LinearLayout) inflater.inflate(
                                                         R.layout.list_row_settings, null);
-                    TextView listNameView = (TextView) listNameContainer.findViewById(
+                    TextView listNameView = listNameContainer.findViewById(
                                                         R.id.listRow_listName);
                     listNameView.setText(name);
                     listNameView.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +78,7 @@ public class SettingsActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-                    ImageView listNameDeletionSign = (ImageView) listNameContainer.findViewById(
+                    ImageView listNameDeletionSign = listNameContainer.findViewById(
                                                                     R.id.listRow_deletionSign);
                     listNameContainer.setOnClickListener(new View.OnClickListener() {
                         @Override

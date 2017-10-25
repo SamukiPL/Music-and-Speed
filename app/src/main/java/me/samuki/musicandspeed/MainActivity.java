@@ -15,8 +15,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.prefs.Preferences;
-
 public class MainActivity extends AppCompatActivity {
     public static final String DEBUG_TAG = "Debugujemy";
 

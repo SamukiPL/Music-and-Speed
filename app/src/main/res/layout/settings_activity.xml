@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="me.samuki.musicandspeed.SettingsActivity">
     <include
-        android:id="@+id/activityToolbar"
+        android:id="@+id/activityAudioListToolbar"
         layout="@layout/tool_bar"/>
     <Button
         android:layout_width="match_parent"

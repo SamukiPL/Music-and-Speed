@@ -35,8 +35,8 @@ public class MusicService extends Service {
     static Location activityLocation;
     static int speedToExceed;
     static boolean overSpeed;
-    static List<String> audioNames;
-    static List<String> paths;
+    static List<String> audioNames, audioArtists, audioPaths;
+    static List<Integer> audioDurations;
     static List<Integer> slowDrivingSongs, fastDrivingSongs;
     static MusicPlayerManager playerManager;
 
@@ -96,6 +96,7 @@ public class MusicService extends Service {
                 startService(nextIntent);
             }
         });
+        playerManager.firstServicePlay = true;
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -191,10 +192,11 @@ public class MusicService extends Service {
                     remoteViews.setOnClickPendingIntent(R.id.pause, pPauseIntent);
                     remoteViews.setImageViewResource(R.id.pause, android.R.drawable.ic_media_pause);
 
-                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
 
                     notification = notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews).build();
+
+                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
 
                     notificationManager.notify(notifyID, notification);
 
@@ -203,10 +205,10 @@ public class MusicService extends Service {
                 } else if (intent.getAction().equals("Previous")) {
                     previous();
 
-                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
-
                     notification = notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews).build();
+
+                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
 
                     notificationManager.notify(notifyID, notification);
 
@@ -215,10 +217,10 @@ public class MusicService extends Service {
                     remoteViews.setOnClickPendingIntent(R.id.pause, pRestartIntent);
                     remoteViews.setImageViewResource(R.id.pause, android.R.drawable.ic_media_play);
 
-                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
-
                     notification = notificationBuilder.setContentIntent(pRestartIntent)
                             .setContent(remoteViews).build();
+
+                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
 
                     notificationManager.notify(notifyID, notification);
                     pause();
@@ -227,10 +229,11 @@ public class MusicService extends Service {
                 } else if (intent.getAction().equals("Next")) {
                     next();
 
-                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
 
                     notification = notificationBuilder.setContentIntent(pendingIntent)
                             .setContent(remoteViews).build();
+
+                    if(playerManager.firstServicePlay) startForeground(notifyID, notification);
 
                     notificationManager.notify(notifyID, notification);
 
@@ -247,11 +250,6 @@ public class MusicService extends Service {
             }
         } catch (NullPointerException ignored) {}
         return START_STICKY;
-    }
-
-    @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
     }
 
     @Override

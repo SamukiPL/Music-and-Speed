@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="me.samuki.musicandspeed.NewListActivity">
     <include
-        android:id="@+id/activityToolbar"
+        android:id="@+id/activityAudioListToolbar"
         layout="@layout/tool_bar"/>
 
     <ScrollView
@@ -105,7 +105,7 @@
                 android:layout_below="@id/settings_0Up"
                 android:layout_toLeftOf="@id/settings_2PositionNumber"
                 android:layout_toStartOf="@id/settings_2PositionNumber"
-                android:text="Speed"
+                android:text="@string/speed"
                 android:textSize="30sp" />
             <ImageView
                 android:id="@+id/settings_0Down"
