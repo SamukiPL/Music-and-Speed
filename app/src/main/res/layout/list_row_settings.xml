@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="13"
-    android:paddingTop="3dp"
-    android:paddingLeft="9dp"
-    android:paddingStart="9dp"
-    android:paddingBottom="3dp"
-    android:paddingRight="0dp"
-    android:paddingEnd="0dp"
-    android:background="@drawable/music_row_drawable">
-    <TextView
-        android:id="@+id/listRow_listName"
-        android:layout_width="0dp"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:paddingLeft="2dp"
+    android:paddingStart="2dp"
+    android:paddingBottom="0dp"
+    android:paddingRight="5dp"
+    android:paddingEnd="5dp">
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="11"
-        android:textSize="22sp"
-        android:gravity="start|center_vertical"/>
-    <ImageView
-        android:id="@+id/listRow_deletionSign"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:src="@drawable/ic_delete_forever_black_36dp"
-        android:contentDescription="@string/delete"
-        android:gravity="center"/>
+        android:weightSum="10"
+        android:paddingTop="8dp"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:paddingBottom="8dp"
+        android:paddingRight="7dp"
+        android:paddingEnd="7dp"
+        android:background="@drawable/music_row_drawable">
+        <TextView
+            android:id="@+id/listRow_listName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="8"
+            android:textSize="22sp"
+            android:gravity="start|center_vertical"/>
+        <ImageView
+            android:id="@+id/listRow_deletionSign"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/ic_delete_forever_black_36dp"
+            android:contentDescription="@string/delete"
+            android:layout_gravity="center"/>
+    </LinearLayout>
 </LinearLayout>

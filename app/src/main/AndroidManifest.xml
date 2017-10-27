@@ -11,18 +11,24 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".AudioListActivityBackup">
+        <activity android:name=".SettingsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".SettingsActivity">
-        </activity>
-        <activity android:name=".NewListActivity">
+        <activity android:name=".NewListActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
         <service android:name=".MusicService"
             android:exported="false" />
-        <activity android:name=".AudioListActivity">
+        <activity android:name=".AudioListActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
