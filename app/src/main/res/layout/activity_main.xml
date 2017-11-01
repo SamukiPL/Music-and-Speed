@@ -25,7 +25,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
             android:layout_above="@+id/progressBar"
-            android:src="@drawable/default_album_cover"
+            android:src="@drawable/initial_plain_logo_398x245_grey"
             android:contentDescription="@string/albumCover"
             android:background="@color/colorAudioListRowBackground"/>
 
