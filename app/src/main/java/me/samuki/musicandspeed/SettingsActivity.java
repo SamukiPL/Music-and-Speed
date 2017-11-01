@@ -18,7 +18,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_activity);
+        setContentView(R.layout.activity_settings);
         setToolbar();
     }
 
@@ -99,6 +99,12 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void newList(View view) {
         Intent intent = new Intent(this, NewListActivity.class);
+        intent.putExtra(MusicDbAdapter.KEY_NAME, "");
+        startActivity(intent);
+    }
+
+    public void newListTest(View view) {
+        Intent intent = new Intent(this, NewListActivityFragmented.class);
         intent.putExtra(MusicDbAdapter.KEY_NAME, "");
         startActivity(intent);
     }

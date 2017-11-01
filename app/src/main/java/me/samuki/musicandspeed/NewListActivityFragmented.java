@@ -2,8 +2,6 @@ package me.samuki.musicandspeed;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +22,8 @@ public class NewListActivityFragmented extends AppCompatActivity {
     static List<String> summaryTitles;
     static List<String> summaryNumbers;
     static List<Integer> selectedSongs;
+    static List<List> intervalsSongs;
+    static List<Integer> intervalsSpeed;
     static boolean firstAudioList;
 
     @Override
@@ -35,6 +35,8 @@ public class NewListActivityFragmented extends AppCompatActivity {
         summaryTitles = new LinkedList<>();
         summaryNumbers = new LinkedList<>();
         selectedSongs = new LinkedList<>();
+        intervalsSongs = new LinkedList<>();
+        intervalsSpeed = new LinkedList<>();
         firstAudioList = true;
 
         NewListFragment firstFragment = new NewListFragment();
@@ -46,12 +48,6 @@ public class NewListActivityFragmented extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.newList_viewPager, firstFragment).commit();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.new_list_menu, menu);
-        return true;
     }
 
     void setToolbar() {
@@ -92,34 +88,92 @@ public class NewListActivityFragmented extends AppCompatActivity {
     public void setSelectedSongs(View view) {
         LinearLayout selectedSongsContainer = (LinearLayout) ((View)view.getParent().getParent())
                                                             .findViewById(R.id.selectedContainer);
+        List<Integer> selectedSongsInInterval = new LinkedList<>();
+
         for(int i = 0; i < selectedSongsContainer.getChildCount(); i++) {
             TextView audioNumberView = ((View)selectedSongsContainer.getChildAt(i))
                     .findViewById(R.id.musicRow_audioNumber);
 
             int audioNumber = Integer.parseInt(audioNumberView.getText().toString());
-            if(audioNumber >= 0) {
-                selectedSongs.add(audioNumber);
+            if (firstAudioList) {
+                if (audioNumber >= 0) selectedSongs.add(audioNumber);
+            } else {
+                if (audioNumber >= 0) selectedSongsInInterval.add(audioNumber);
             }
         }
 
-        int count = selectedSongs.size();
+        int count;
 
-        summaryTitles.add(getResources().getQuantityString(
+        if (firstAudioList) count = selectedSongs.size();
+        else count = selectedSongsInInterval.size();
+
+        if (firstAudioList) {
+            summaryTitles.add(getResources().getQuantityString(
                 R.plurals.summaryTitleList, count, count));
-        summaryNumbers.add("");
+            summaryNumbers.add("");
+        }
+        else {
+            summaryTitles.add(getResources().getQuantityString(
+                    R.plurals.summaryTitleInterval, count, count));
+            intervalsSongs.add(selectedSongsInInterval);
+            summaryNumbers.add(getString(R.string.intervalSpeed,
+                    intervalsSpeed.get(intervalsSongs.size()-1)));
+        }
 
         NewListFragment anotherActivity = new NewListFragment();
         Bundle args = new Bundle();
         args.putString("title", getString(R.string.summaryFragment));
         anotherActivity.setArguments(args);
         getSupportFragmentManager().beginTransaction().replace(R.id.newList_viewPager, anotherActivity).commit();
+
+        firstAudioList = false;
     }
 
     public void addNewInterval(View view) {
         NewListFragment anotherActivity = new NewListFragment();
         Bundle args = new Bundle();
-        args.putString("title", getString(R.string.songsFragment));
+        args.putString("title", getString(R.string.speedFragment));
         anotherActivity.setArguments(args);
         getSupportFragmentManager().beginTransaction().replace(R.id.newList_viewPager, anotherActivity).commit();
+    }
+
+    public void setSongsForInterval(View view) {
+        NewListFragment anotherActivity = new NewListFragment();
+        Bundle args = new Bundle();
+        args.putString("title", getString(R.string.songsFragment));
+        intervalsSpeed.add(getSpeed((View) view.getParent().getParent()));
+        anotherActivity.setArguments(args);
+        getSupportFragmentManager().beginTransaction().replace(R.id.newList_viewPager, anotherActivity).commit();
+    }
+
+    public void changeValue(View view) {
+        TextView valueView = (TextView) findViewById(R.id.settings_0PositionNumber);
+        switch (view.getId()) {
+            case R.id.settings_0Up:
+            case R.id.settings_0Down:
+                valueView = (TextView) findViewById(R.id.settings_0PositionNumber);
+                break;
+            case R.id.settings_1Up:
+            case R.id.settings_1Down:
+                valueView = (TextView) findViewById(R.id.settings_1PositionNumber);
+                break;
+            case R.id.settings_2Up:
+            case R.id.settings_2Down:
+                valueView = (TextView) findViewById(R.id.settings_2PositionNumber);
+                break;
+        }
+        int value = Integer.parseInt(valueView.getText().toString());
+        if(view.getContentDescription().equals(getString(R.string.up))) value++; else value--;
+        if(value == 10) value = 0; else if(value == -1) value = 9;
+        valueView.setText(getString(R.string.valueInt, value));
+    }
+
+    private int getSpeed(View view) {
+        TextView position0View = (TextView) view.findViewById(R.id.settings_0PositionNumber);
+        TextView position1View = (TextView) view.findViewById(R.id.settings_1PositionNumber);
+        TextView position2View = (TextView) view.findViewById(R.id.settings_2PositionNumber);
+        return  Integer.parseInt(position2View.getText().toString())*100 +
+                Integer.parseInt(position1View.getText().toString())*10  +
+                Integer.parseInt(position0View.getText().toString());
     }
 }

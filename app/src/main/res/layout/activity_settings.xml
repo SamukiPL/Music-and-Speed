@@ -154,8 +154,53 @@
 
             <View
                 android:layout_width="match_parent"
+                android:layout_height="2dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingLeft="12dp"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                android:paddingRight="12dp"
+                android:paddingEnd="12dp"
+                android:orientation="horizontal"
+                android:weightSum="11"
+                android:background="@color/colorAudioListRowBackground">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="start|center_vertical"
+                        android:text="Test adding"
+                        android:textSize="22sp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="start|center_vertical"
+                        android:text="Testing new way to add list"
+                        android:textSize="11sp"/>
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_gravity="center"
+                    android:onClick="newListTest"
+                    android:src="@drawable/ic_add_circle_outline_black_36dp"
+                    android:contentDescription="@string/newList" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@color/colorAccent" />
+
             <LinearLayout
                 android:id="@+id/settings_listContainer"
                 android:layout_width="match_parent"

@@ -151,7 +151,6 @@ public class NewListFragment extends Fragment {
             selectedParentView.addView(musicRowSelected);
             notSelectedParentView.addView(musicRowNotSelected);
         }
-        NewListActivityFragmented.firstAudioList = false;
     }
 
     private void fillSummaryContainer(LinearLayout view) {

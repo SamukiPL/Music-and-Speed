@@ -121,4 +121,21 @@
         android:contentDescription="@string/down"
         android:onClick="changeValue"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/settings_2Down"
+        android:weightSum="3">
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Set speed"
+            android:onClick="setSongsForInterval"/>
+    </LinearLayout>
+
 </RelativeLayout>

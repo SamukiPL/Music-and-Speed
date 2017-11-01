@@ -91,7 +91,6 @@ public class AudioListActivity extends AppCompatActivity {
         isPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         if(isPermission) setAudioLists(); else askForPermission();
-        startActivity(new Intent(this, NewListActivityFragmented.class));
     }
 
     @Override
@@ -236,7 +235,7 @@ public class AudioListActivity extends AppCompatActivity {
                     String path = cur.getString(cur.getColumnIndex(MediaStore.Audio.Media.DATA));
                     audioPaths.add(path);
                     int duration = cur.getInt(cur.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                    audioDurations.add(duration);
+                    audioDurations.add(duration/1000);
                 }
             }
         }
