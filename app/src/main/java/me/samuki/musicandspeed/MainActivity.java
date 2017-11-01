@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 if(MusicService.playerManager.isPlaying) {
                     button.setContentDescription(getString(R.string.stop));
-                    button.setImageResource(android.R.drawable.ic_media_pause);
+                    button.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
                 }
                 if (trackId >= 0) playMusic(trackId);
             }
@@ -137,12 +137,12 @@ public class MainActivity extends AppCompatActivity {
             else
                 restartMusicService();
             button.setContentDescription(getString(R.string.stop));
-            button.setImageResource(android.R.drawable.ic_media_pause);
+            button.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
         }
         else {
             pauseMusicService();
             button.setContentDescription(getString(R.string.play));
-            button.setImageResource(android.R.drawable.ic_media_play);
+            button.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
         }
     }
 
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
         startMusicService(trackId);
         button.setContentDescription(getString(R.string.stop));
-        button.setImageResource(android.R.drawable.ic_media_pause);
+        button.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
     }
 
     public void previousMusic(View view) {

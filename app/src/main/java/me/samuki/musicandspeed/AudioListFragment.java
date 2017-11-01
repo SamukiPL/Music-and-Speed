@@ -28,8 +28,8 @@ import static me.samuki.musicandspeed.MusicService.speedToExceed;
 
 public class AudioListFragment extends Fragment {
     private static int position = 0;
-    private static LinearLayout audioContainer;
 
+    private LinearLayout audioContainer;
     private LayoutInflater inflater;
     private LinearLayout songsListChooser;
     private View viewForListsListFragment;
@@ -50,8 +50,10 @@ public class AudioListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (position++ == 0)
+        if (position++%2 == 0) {
             fillAudioContainer(view);
+            showAllAudioNames();
+        }
         else {
             fillListContainer(view);
             viewForListsListFragment = view;

@@ -58,11 +58,11 @@ public class MusicService extends Service {
         this.playButton = playButton;
         if(playerManager.isPlaying) {
             playButton.setContentDescription(getString(R.string.stop));
-            playButton.setImageResource(android.R.drawable.ic_media_pause);
+            playButton.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
         }
         else {
             playButton.setContentDescription(getString(R.string.play));
-            playButton.setImageResource(android.R.drawable.ic_media_play);
+            playButton.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
         }
     }
 
@@ -279,7 +279,7 @@ public class MusicService extends Service {
     private void restart() {
         playerManager.restartMusic();
         playButton.setContentDescription(getString(R.string.stop));
-        playButton.setImageResource(android.R.drawable.ic_media_pause);
+        playButton.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
     }
 
     private void previous() {
@@ -312,7 +312,7 @@ public class MusicService extends Service {
         playerManager.stopMusic();
         playerManager.firstServicePlay = true;
         playButton.setContentDescription(getString(R.string.play));
-        playButton.setImageResource(android.R.drawable.ic_media_play);
+        playButton.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
     }
 
     public void updateSpeed() {

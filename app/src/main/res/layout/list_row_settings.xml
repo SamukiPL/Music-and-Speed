@@ -10,10 +10,10 @@
     <LinearLayout
         android:orientation="horizontal" android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="10"
+        android:weightSum="11"
         android:paddingTop="8dp"
-        android:paddingLeft="10dp"
-        android:paddingStart="10dp"
+        android:paddingLeft="13dp"
+        android:paddingStart="13dp"
         android:paddingBottom="8dp"
         android:paddingRight="7dp"
         android:paddingEnd="7dp"
@@ -22,7 +22,7 @@
             android:id="@+id/listRow_listName"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="8"
+            android:layout_weight="9"
             android:textSize="22sp"
             android:gravity="start|center_vertical"/>
         <ImageView

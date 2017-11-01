@@ -26,25 +26,34 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="11"
-                android:paddingTop="15dp"
+                android:paddingTop="8dp"
                 android:paddingLeft="12dp"
                 android:paddingStart="12dp"
-                android:paddingBottom="15dp"
+                android:paddingBottom="8dp"
                 android:paddingRight="12dp"
                 android:paddingEnd="12dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:background="@color/colorPrimary">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="9"
-                    android:text="@string/useGlobalSpeed"
-                    android:textSize="22sp"
-                    android:textColor="@color/white"/>
+                android:background="@color/colorAudioListRowBackground">
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/useGlobalSpeed"
+                        android:textSize="22sp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/useGlobalSpeed"
+                        android:textSize="11sp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:clipChildren="false"
                     android:clipToPadding="false"
@@ -66,20 +75,29 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="11"
-                android:paddingTop="15dp"
+                android:paddingTop="8dp"
                 android:paddingLeft="12dp"
                 android:paddingStart="12dp"
-                android:paddingBottom="15dp"
+                android:paddingBottom="8dp"
                 android:paddingRight="12dp"
                 android:paddingEnd="12dp"
-                android:background="@color/colorPrimary">
-                <TextView
+                android:background="@color/colorAudioListRowBackground">
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="9"
-                    android:text="@string/globalSpeedText"
-                    android:textSize="22sp"
-                    android:textColor="@color/white"/>
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/globalSpeedText"
+                        android:textSize="22sp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/globalSpeedText"
+                        android:textSize="11sp"/>
+                </LinearLayout>
                 <TextView
                     android:id="@+id/settings_globalSpeed"
                     android:layout_width="0dp"
@@ -87,8 +105,7 @@
                     android:layout_weight="2"
                     android:text="@string/globalSpeed"
                     android:textSize="22sp"
-                    android:gravity="center"
-                    android:textColor="@color/white"/>
+                    android:gravity="center"/>
             </LinearLayout>
 
             <View
@@ -98,32 +115,41 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
+                android:paddingBottom="8dp"
                 android:paddingLeft="12dp"
                 android:paddingStart="12dp"
-                android:paddingTop="10dp"
+                android:paddingTop="8dp"
                 android:paddingRight="12dp"
                 android:paddingEnd="12dp"
                 android:orientation="horizontal"
-                android:weightSum="10"
-                android:background="@color/colorPrimary">
-
-                <TextView
+                android:weightSum="11"
+                android:background="@color/colorAudioListRowBackground">
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="8"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/listsNames"
-                    android:textSize="22sp"
-                    android:textColor="@color/white"/>
-
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/listsNames"
+                        android:textSize="22sp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="start|center_vertical"
+                        android:text="@string/listsNames"
+                        android:textSize="11sp"/>
+                </LinearLayout>
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:contentDescription="@string/newList"
+                    android:layout_gravity="center"
                     android:onClick="newList"
-                    android:src="@drawable/ic_add_circle_outline_white_36dp" />
+                    android:src="@drawable/ic_add_circle_outline_black_36dp"
+                    android:contentDescription="@string/newList" />
             </LinearLayout>
 
             <View

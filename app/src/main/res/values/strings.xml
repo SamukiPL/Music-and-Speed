@@ -29,4 +29,18 @@
     <string name="useGlobalSpeed">Use global speed</string>
     <string name="globalSpeedText">Global speed</string>
     <string name="globalSpeed">70</string>
+
+    <string name="nameFragment">List Name</string>
+    <string name="songsFragment">Songs</string>
+    <string name="speedFragment">Speed</string>
+    <string name="summaryFragment">Summary</string>
+
+    <string name="selectedSongs">Selected Songs</string>
+    <string name="notSelectedSongs">Not Selected Songs</string>
+
+    <string name="summaryTitleList">List contains %1$d songs</string>
+    <plurals name="summaryTitleList">
+        <item quantity="one">List contains %1$d song</item>
+        <item quantity="other">List contains %1$d songs</item>
+    </plurals>
 </resources>

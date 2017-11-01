@@ -91,6 +91,7 @@ public class AudioListActivity extends AppCompatActivity {
         isPermission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         if(isPermission) setAudioLists(); else askForPermission();
+        startActivity(new Intent(this, NewListActivityFragmented.class));
     }
 
     @Override
@@ -268,12 +269,12 @@ public class AudioListActivity extends AppCompatActivity {
         if(button.getContentDescription().equals(getString(R.string.play))) {
             restartMusicService();
             button.setContentDescription(getString(R.string.stop));
-            button.setImageResource(android.R.drawable.ic_media_pause);
+            button.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
         }
         else {
             pauseMusicService();
             button.setContentDescription(getString(R.string.play));
-            button.setImageResource(android.R.drawable.ic_media_play);
+            button.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
         }
         Log.d(DEBUG_TAG, "PLAY MUSIC");
     }
