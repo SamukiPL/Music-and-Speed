@@ -30,13 +30,13 @@ import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 
 public class MusicService extends Service {
     private final IBinder mBinder = new LocalBinder();
-    private final int notifyID = 86;//NNNANI!! HACHIROKU!!!
+    private final int notifyID = 86;
 
     static Location activityLocation;
     static int speedToExceed;
     static boolean overSpeed;
-    static List<String> audioNames, audioArtists, audioPaths;
-    static List<Integer> audioDurations;
+    public static List<String> audioNames, audioArtists, audioPaths;
+    public static List<Integer> audioDurations;
     static List<Integer> slowDrivingSongs, fastDrivingSongs;
     static MusicPlayerManager playerManager;
 
@@ -244,7 +244,6 @@ public class MusicService extends Service {
                     stopForeground(true);
                     stopSelf();
                 } else if (intent.getAction().equals("Location")) {
-                    Log.d(DEBUG_TAG, "TAK TAK TAK");
                     return START_NOT_STICKY;
                 }
             }
