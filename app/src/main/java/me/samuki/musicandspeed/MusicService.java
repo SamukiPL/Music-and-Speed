@@ -36,7 +36,7 @@ public class MusicService extends Service {
     static int speedToExceed;
     static boolean overSpeed;
     public static List<String> audioNames, audioArtists, audioPaths;
-    public static List<Integer> audioDurations;
+    public static List<Long> audioDurations;
     static List<Integer> slowDrivingSongs, fastDrivingSongs;
     static MusicPlayerManager playerManager;
 

@@ -12,5 +12,5 @@ interface AudioListPresenter<V> : BasePresenter<V> {
     abstract fun getAudioPathsList(): List<String>
     abstract fun getAudioDurationsList(): List<Long>
     abstract fun askForPermission()
-
+    abstract fun initPlayerManager()
 }
