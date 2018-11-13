@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Music-and-Speed.iml" filepath="$PROJECT_DIR$/Music-and-Speed.iml" />
-      <module fileurl="file://H:\Andek\Projekty\MusicAndSpeed\Music-and-Speed.iml" filepath="H:\Andek\Projekty\MusicAndSpeed\Music-and-Speed.iml" />
-      <module fileurl="file://C:\Projekty\Music-and-Speed\MusicAndSpeed.iml" filepath="C:\Projekty\Music-and-Speed\MusicAndSpeed.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MusicAndSpeed.iml" filepath="$PROJECT_DIR$/MusicAndSpeed.iml" />
+      <module fileurl="file://C:/Projekty/Music-and-Speed/MusicAndSpeed.iml" filepath="C:/Projekty/Music-and-Speed/MusicAndSpeed.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

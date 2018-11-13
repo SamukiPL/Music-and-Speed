@@ -4,12 +4,11 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.samuki.musicandspeed.SettingsActivity"
     android:clipChildren="false"
     android:clipToPadding="false">
     <include
         android:id="@+id/activityAudioListToolbar"
-        layout="@layout/tool_bar"/>
+        layout="@layout/appbar"/>
 
 
     <ScrollView

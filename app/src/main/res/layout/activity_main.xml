@@ -1,120 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="me.samuki.musicandspeed.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorAudioListBackground"
+    android:clipChildren="false">
 
-    <include
-    android:id="@+id/activityKurnaToolbar"
-    layout="@layout/tool_bar"/>
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/tiles"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorPrimary">
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/colorPrimary"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
-        <ImageView
-            android:id="@+id/albumCover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentStart="true"
-            android:layout_above="@+id/progressBar"
-            android:src="@drawable/initial_plain_logo_398x245_grey"
-            android:contentDescription="@string/albumCover"
-            android:background="@color/colorAudioListRowBackground"/>
-
-        <View
-            android:id="@+id/player_progressBarBackground"
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:layout_above="@+id/actualSpeed"
-            android:layout_marginTop="0dp"
-            android:layout_marginLeft="-4dp"
-            android:layout_marginStart="-4dp"
-            android:layout_marginBottom="-2dp"
-            android:layout_marginRight="-4dp"
-            android:layout_marginEnd="-4dp"
-            android:background="@color/colorProgressBarBackground" />
-
-        <ProgressBar
-            android:id="@id/progressBar"
-            style="@style/CustomProgressBar"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_above="@+id/actualSpeed"
-            android:layout_marginTop="-2dp"/>
-
-        <TextView
-            android:id="@id/actualSpeed"
-            android:layout_width="match_parent"
+        <include
+            android:id="@+id/songsTile"
+            layout="@layout/navigation_tile"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentStart="true"
-            android:layout_above="@+id/actualSong"
-            android:text="@string/speed_not_available"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/white"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/listsTile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/listsTile"
+            layout="@layout/navigation_tile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/songsTile"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/mainViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/player"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tiles">
+
+    </android.support.v4.view.ViewPager>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@id/actualSong"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentStart="true"
-            android:layout_above="@+id/buttons"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="25sp"/>
+            android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:id="@id/buttons"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_margin="5dp"
-            android:orientation="horizontal"
-            android:layout_alignParentBottom="true"
-            android:weightSum="3">
-            <ImageButton
-                android:id="@+id/previousButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_prev_circle_outline_white_48dp"
-                android:onClick="previousMusic"
-                android:layout_weight="1"
-                android:contentDescription="@string/previous"
-                android:background="@android:color/transparent"/>
-            <ImageButton
-                android:id="@+id/playButton"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_play_circle_outline_white_48dp"
-                android:text="@string/play"
-                android:onClick="playMusic"
-                android:layout_weight="1"
-                android:contentDescription="@string/play"
-                android:background="@android:color/transparent"/>
-            <ImageButton
-                android:id="@+id/nextButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_next_circle_outline_white_48dp"
-                android:onClick="nextMusic"
-                android:layout_weight="1"
-                android:contentDescription="@string/next"
-                android:background="@android:color/transparent"/>
-        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
-    </RelativeLayout>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
