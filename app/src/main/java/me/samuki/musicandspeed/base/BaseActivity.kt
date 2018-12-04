@@ -1,6 +1,7 @@
 package me.samuki.musicandspeed.base
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -14,9 +15,14 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import dagger.android.AndroidInjection
 import me.samuki.musicandspeed.R
+import me.samuki.musicandspeed.utilityvm.ViewModelFactory
+import javax.inject.Inject
 
 
 abstract class BaseActivity(private val showToolbar: Boolean) : AppCompatActivity() {
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
 
     private fun androidInjection() {
         AndroidInjection.inject(this)

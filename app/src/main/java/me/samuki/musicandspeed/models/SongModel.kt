@@ -1,5 +1,7 @@
 package me.samuki.musicandspeed.models
 
+import android.net.Uri
+
 
 data class SongModel(
 
@@ -9,7 +11,9 @@ data class SongModel(
 
         var album: String,
 
-        var path: String,
+        var albumArtPath: Uri,
+
+        var path: Uri,
 
         var albumCover: String,
 

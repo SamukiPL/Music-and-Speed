@@ -25,7 +25,9 @@ class MusicApp : Application(), HasActivityInjector, HasSupportFragmentInjector 
     override fun onCreate() {
         super.onCreate()
 
-        this.appComponent = DaggerAppComponent.create()
+        this.appComponent = DaggerAppComponent .builder()
+                .contentResolver(contentResolver)
+                .build()
 
         this.appComponent.inject(this)
     }

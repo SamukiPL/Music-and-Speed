@@ -24,6 +24,8 @@ interface AutoUpdatableAdapter {
                 return compare(old[oldItemPosition], new[newItemPosition])
             }
         })
+
+        diff.dispatchUpdatesTo(this)
     }
 
 }

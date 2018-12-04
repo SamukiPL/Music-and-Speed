@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="me.samuki.musicandspeed">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -12,7 +13,8 @@
         android:label="@string/app_name"
         android:name=".MusicApp"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".activities.main.MainActivity"
             android:configChanges="orientation">
             <intent-filter>
@@ -21,6 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".services.media.CustomBrowserService">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
         <!--<activity android:name=".SettingsActivity"-->
             <!--android:configChanges="orientation">-->
         <!--</activity>-->
