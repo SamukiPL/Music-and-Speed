@@ -1,6 +1,5 @@
 package me.samuki.musicandspeed.activities.main
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
@@ -10,17 +9,18 @@ import me.samuki.musicandspeed.R
 import me.samuki.musicandspeed.activities.main.fragments.MainPagerAdapter
 import me.samuki.musicandspeed.activities.main.viewmodel.MainActivityViewModel
 import me.samuki.musicandspeed.base.BaseActivity
+import me.samuki.musicandspeed.services.media.MusicLibrary
 import javax.inject.Inject
 
 
 class MainActivity: BaseActivity(true) {
 
     private val vm by lazy {
-        ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
+        ViewModelProviders.of(this, factory).get(MainActivityViewModel::class.java)
     }
 
     private val pagerAdapter by lazy {
-        MainPagerAdapter(supportFragmentManager)
+        MainPagerAdapter(supportFragmentManager, layoutInflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,12 +32,6 @@ class MainActivity: BaseActivity(true) {
     override fun onStart() {
         super.onStart()
         vm.getSongs()
-        vm?.songsList?.observe(this, Observer { list ->
-            list?.let {
-//                songsAdapter.itemList = it
-                Log.d("TEST", list.toString())
-            }
-        })
     }
 
     private fun initView() {
@@ -46,12 +40,15 @@ class MainActivity: BaseActivity(true) {
     }
 
     private fun initTiles() {
-        songsTile?.tileName?.setText(R.string.songs)
-        listsTile?.tileName?.setText(R.string.lists)
+//        songsTile?.tileName?.setText(R.string.songs)
+//        listsTile?.tileName?.setText(R.string.lists)
     }
 
     private fun initViewPager() {
         mainViewPager?.adapter = pagerAdapter
+        pagerAdapter.setTabs(tabLayout.apply {
+            setupWithViewPager(mainViewPager)
+        })
     }
 
 }
