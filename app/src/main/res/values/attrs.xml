@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FloatingTextActionButton">
+        <attr name="buttonColor" format="color" />
+        <attr name="buttonIcon" format="reference" />
+        <attr name="showText" format="boolean" />
+        <attr name="text" format="string" />
+    </declare-styleable>
+</resources>

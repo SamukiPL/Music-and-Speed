@@ -25,9 +25,7 @@ class SongsFragment : BaseFragment() {
     }
 
     private val vm by lazy {
-        (activity as? MainActivity)?.run {
-            ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
-        }
+        provideActivityViewModel<MainActivity, MainActivityViewModel>()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -50,8 +48,8 @@ class SongsFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         list?.apply {
-            adapter = songsAdapter
             layoutManager = LinearLayoutManager(context)
+            adapter = songsAdapter
         }
     }
 

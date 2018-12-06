@@ -19,8 +19,11 @@ data class SongModel(
 
         var duration: Long
 
-) {
-    fun getDiff(): String {
-        return "$name $artist $album $path $duration"
-    }
+): ListModel {
+
+    override fun getDiff() = "$name $artist $album $path $duration"
+
+    override fun getSortValue() = name
+
+    override fun viewType() = SONG_VIEW
 }

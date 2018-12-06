@@ -48,4 +48,9 @@
         <item quantity="one">Interval with %1$d song</item>
         <item quantity="other">Interval with %1$d songs</item>
     </plurals>
+
+    <string name="chosenSongsHeader">Chosen songs</string>
+    <string name="otherSongsHeader">Other songs</string>
+    <string name="done">Done</string>
+    <string name="create">Create</string>
 </resources>

@@ -1,7 +1,9 @@
 package me.samuki.musicandspeed.base
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
@@ -64,5 +66,8 @@ abstract class BaseActivity(private val showToolbar: Boolean) : AppCompatActivit
                 setSupportActionBar(it)
         }
     }
+
+    inline fun <reified T : ViewModel> provideViewModel(): T =
+            ViewModelProviders.of(this, factory).get(T::class.java)
 
 }

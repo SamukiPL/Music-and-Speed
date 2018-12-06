@@ -19,12 +19,10 @@ import javax.inject.Inject
 
 class MainActivityViewModel @Inject constructor(
         private val musicLibrary: MusicLibrary
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _songsList =  MutableLiveData<List<SongModel>>()
     val songsList = _songsList as LiveData<List<SongModel>>
-
-    val disposable = CompositeDisposable()
 
     fun getSongs() {
         disposable +=

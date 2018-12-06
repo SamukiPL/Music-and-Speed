@@ -9,15 +9,12 @@ import kotlinx.android.synthetic.main.navigation_tile.view.*
 import me.samuki.musicandspeed.R
 import javax.inject.Inject
 
+const val FRAGMENT_COUNT = 2
 
 class MainPagerAdapter (
         fragmentManager: FragmentManager,
         private val layoutInflater: LayoutInflater
 ) : FragmentPagerAdapter(fragmentManager) {
-
-    companion object {
-        const val FRAGMENT_COUNT = 2
-    }
 
     override fun getItem(position: Int): Fragment {
         return when(position) {

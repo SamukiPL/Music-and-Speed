@@ -1,10 +1,14 @@
 package me.samuki.musicandspeed.activities.main.adapters.viewholders
 
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.ShapeDrawable
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import kotlinx.android.synthetic.main.music_row.view.*
+import kotlinx.android.synthetic.main.row_song.view.*
 import me.samuki.musicandspeed.R
 import me.samuki.musicandspeed.models.SongModel
 import java.util.concurrent.TimeUnit

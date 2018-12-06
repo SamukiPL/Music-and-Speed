@@ -74,7 +74,7 @@
 //            LinearLayout musicRow;
 //
 //            if (i + 1 != audioNames.size())
-//                musicRow = (LinearLayout) inflater.inflate(R.layout.music_row, null);
+//                musicRow = (LinearLayout) inflater.inflate(R.layout.row_song, null);
 //            else
 //                musicRow = (LinearLayout) inflater.inflate(R.layout.music_row_last_element, null);
 //

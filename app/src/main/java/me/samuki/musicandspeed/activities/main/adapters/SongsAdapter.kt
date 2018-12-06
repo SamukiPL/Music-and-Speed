@@ -18,8 +18,8 @@ class SongsAdapter : RecyclerView.Adapter<SongViewHolder>(), AutoUpdatableAdapte
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, position: Int): SongViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.music_row, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.row_song, parent, false)
         return SongViewHolder(view)
     }
 

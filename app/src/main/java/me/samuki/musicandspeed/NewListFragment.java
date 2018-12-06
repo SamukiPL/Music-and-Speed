@@ -94,11 +94,11 @@
 //            final LinearLayout musicRowNotSelected;
 //
 //            if (i + 1 != audioNames.size()) {
-//                musicRowSelected = (LinearLayout) inflater.inflate(R.layout.music_row, null);
-//                musicRowNotSelected = (LinearLayout) inflater.inflate(R.layout.music_row, null);
+//                musicRowSelected = (LinearLayout) inflater.inflate(R.layout.row_song, null);
+//                musicRowNotSelected = (LinearLayout) inflater.inflate(R.layout.row_song, null);
 //            }
 //            else {
-//                musicRowSelected = (LinearLayout) inflater.inflate(R.layout.music_row, null);
+//                musicRowSelected = (LinearLayout) inflater.inflate(R.layout.row_song, null);
 //                musicRowNotSelected = (LinearLayout) inflater.inflate(R.layout.music_row_last_element, null);
 //            }
 //            //SELECTED
