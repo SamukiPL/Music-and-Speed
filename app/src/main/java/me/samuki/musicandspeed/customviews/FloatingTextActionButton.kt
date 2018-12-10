@@ -7,8 +7,12 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.ScaleAnimation
 import kotlinx.android.synthetic.main.floating_text_action_button.view.*
 import me.samuki.musicandspeed.R
+import me.samuki.musicandspeed.base.AnimationListenerAdapter
 import me.samuki.musicandspeed.extensions.dpToPx
 
 
@@ -95,11 +99,30 @@ class FloatingTextActionButton(context: Context, attrs: AttributeSet) : Constrai
     }
 
     private fun manageIcon() {
-        buttonImageView.setImageDrawable(ContextCompat.getDrawable(context, buttonIcon))
+        if (buttonIcon != 0)
+            buttonImageView.setImageDrawable(ContextCompat.getDrawable(context, buttonIcon))
     }
 
     private fun manageText() {
         buttonTextView.text = text
+    }
+
+    fun show() {
+        val anim = AnimationUtils.loadAnimation(context,
+                R.anim.floating_text_action_button_show_animation)
+        anim.setAnimationListener(AnimationListenerAdapter(
+                onEnd = { visibility = View.VISIBLE }
+        ))
+        startAnimation(anim)
+    }
+
+    fun hide() {
+        val anim = AnimationUtils.loadAnimation(context,
+                R.anim.floating_text_action_button_hide_animation)
+        anim.setAnimationListener(AnimationListenerAdapter(
+                onEnd = { visibility = View.INVISIBLE }
+        ))
+        startAnimation(anim)
     }
 
 }

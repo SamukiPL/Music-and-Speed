@@ -25,5 +25,5 @@ data class SongModel(
 
     override fun getSortValue() = name
 
-    override fun viewType() = SONG_VIEW
+    override fun getViewType() = SONG_VIEW
 }

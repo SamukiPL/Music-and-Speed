@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAudioListBackground"
-    android:clipChildren="false">
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/tiles"
@@ -136,5 +137,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <me.samuki.musicandspeed.customviews.FloatingTextActionButton
+        android:id="@+id/actionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        app:buttonIcon="@drawable/baseline_done_black_48"
+        app:layout_constraintBottom_toTopOf="@+id/player"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:showText="true"
+        app:text="@string/done" />
 
 </android.support.constraint.ConstraintLayout>

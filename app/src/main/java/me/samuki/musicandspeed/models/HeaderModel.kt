@@ -9,5 +9,5 @@ data class HeaderModel(
 
     override fun getSortValue() = ""
 
-    override fun viewType() = HEADER_VIEW
+    override fun getViewType() = HEADER_VIEW
 }

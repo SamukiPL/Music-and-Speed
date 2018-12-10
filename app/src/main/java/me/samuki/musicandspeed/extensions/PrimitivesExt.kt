@@ -19,3 +19,7 @@ fun Float.dpToPx(context: Context): Float {
             context.resources.displayMetrics
     )
 }
+
+fun String?.isEqual(test: String): Boolean {
+    return this != null && this == test
+}

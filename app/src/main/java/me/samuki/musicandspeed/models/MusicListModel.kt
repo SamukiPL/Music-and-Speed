@@ -9,5 +9,5 @@ data class MusicListModel (
 
     override fun getSortValue() = name
 
-    override fun viewType() = MUSIC_LIST_VIEW
+    override fun getViewType() = MUSIC_LIST_VIEW
 }

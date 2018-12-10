@@ -2,6 +2,7 @@ package me.samuki.musicandspeed.activities.listcreation
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
+import kotlinx.android.synthetic.main.activity_main.*
 import me.samuki.musicandspeed.R
 import me.samuki.musicandspeed.activities.listcreation.fragments.CreationSettingsFragment
 import me.samuki.musicandspeed.activities.listcreation.fragments.CreationSongsListFragment
@@ -32,15 +33,18 @@ class ListCreationActivity : BaseActivity(true) {
     }
 
     private fun setFragment(currentFragment: CreationFragments) {
+        supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction().let {
             val fragment = when(currentFragment) {
                 CreationFragments.LIST_FRAGMENT -> CreationSongsListFragment()
                 CreationFragments.SUMMARY_FRAGMENT -> CreationSummaryFragment()
                 CreationFragments.SETTINGS_FRAGMENT -> CreationSettingsFragment()
             }
+            actionButton.hide()
             it.replace(R.id.creationFragment, fragment)
             it.addToBackStack(null)
             it.commit()
+            actionButton.show()
         }
     }
 

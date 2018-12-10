@@ -45,7 +45,7 @@ class SongsListAdapter : RecyclerView.Adapter<SongsListAdapter.ListViewHolder>()
 
     override fun getItemCount() = itemList.size
 
-    override fun getItemViewType(position: Int) = itemList[position].item.viewType()
+    override fun getItemViewType(position: Int) = itemList[position].item.getViewType()
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         holder.bindView(itemList[position]) {changeItemState(it)}

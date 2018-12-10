@@ -13,6 +13,7 @@ import me.samuki.musicandspeed.activities.listcreation.adapters.SongsListAdapter
 import me.samuki.musicandspeed.base.BaseViewModel
 import me.samuki.musicandspeed.extensions.toSongModelList
 import me.samuki.musicandspeed.models.HeaderModel
+import me.samuki.musicandspeed.models.IntervalModel
 import me.samuki.musicandspeed.models.SongModel
 import me.samuki.musicandspeed.services.media.MusicLibrary
 import javax.inject.Inject
@@ -55,6 +56,11 @@ class ListCreationViewModel @Inject constructor(
     }
     val currentFragment = _currentFragment as LiveData<ListCreationActivity.CreationFragments>
 
+    private val _createdIntervals = MutableLiveData<List<IntervalModel>>().apply {
+        value = emptyList()
+    }
+    val createdIntervals = _createdIntervals as LiveData<List<IntervalModel>>
+
     fun getSongs() {
         disposable +=
                 musicLibrary.provideAllSongsObservable()
@@ -71,6 +77,23 @@ class ListCreationViewModel @Inject constructor(
     fun saveCurrentlyChosenItems(list: List<WrappedListItem>) {
         currentlyChosenSongs.clear()
         currentlyChosenSongs.addAll(list)
+    }
+
+    fun pickVolumeAndSpeed() {
+        _currentFragment.postValue(ListCreationActivity.CreationFragments.SETTINGS_FRAGMENT)
+    }
+
+    fun endSongSelection(volume: Int, speed: Int) {
+        _createdIntervals.value?.let { intervals ->
+            val newList = intervals.toMutableList()
+            newList.add(
+                    IntervalModel(volume, speed, currentlyChosenSongs.filter { it.item is SongModel }
+                            .map { it.item as SongModel }
+                    )
+            )
+            _createdIntervals.postValue(newList)
+        }
+        _currentFragment.postValue(ListCreationActivity.CreationFragments.SUMMARY_FRAGMENT)
     }
 
 }

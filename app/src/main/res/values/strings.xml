@@ -25,7 +25,6 @@
     <string name="lists">Lists</string>
     <string name="listsNames">Lists names</string>
     <string name="author">Author</string>
-    <string name="speed">Speed</string>
 
     <string name="useGlobalSpeed">Use global speed</string>
     <string name="globalSpeedText">Global speed</string>
@@ -53,4 +52,13 @@
     <string name="otherSongsHeader">Other songs</string>
     <string name="done">Done</string>
     <string name="create">Create</string>
+    <string name="arrowRight">Show</string>
+    <string name="kmPerHour">%1$d km/h</string>
+    <plurals name="songsCount">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
+    <string name="volume">Volume: %1$d</string>
+    <string name="speed">Speed: %1$d km/h</string>
+
 </resources>
