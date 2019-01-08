@@ -1,5 +1,7 @@
 package me.samuki.musicandspeed.models
 
+import java.util.*
+
 
 data class IntervalModel(
         val volume: Int,

@@ -12,7 +12,8 @@
     android:background="@drawable/music_row_drawable"
     android:foreground="?selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:elevation="4dp">
 
     <ImageView
         android:id="@+id/albumCover"

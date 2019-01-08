@@ -9,6 +9,7 @@ fun List<LibraryModel>.toSongModelList(): List<SongModel> {
     val songModelList = mutableListOf<SongModel>()
     forEach {
         songModelList.add(SongModel(
+                it.metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID),
                 it.metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE),
                 it.metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST),
                 it.metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM),
@@ -19,4 +20,12 @@ fun List<LibraryModel>.toSongModelList(): List<SongModel> {
         ))
     }
     return songModelList
+}
+
+fun List<SongModel>.toSongSeed(): String {
+    var songSeed = ""
+    forEach {
+        songSeed += "_" + it.id + "_"
+    }
+    return songSeed
 }

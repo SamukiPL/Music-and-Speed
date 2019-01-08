@@ -1,10 +1,8 @@
 package me.samuki.musicandspeed.activities.main.fragments
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +12,6 @@ import me.samuki.musicandspeed.activities.main.MainActivity
 import me.samuki.musicandspeed.activities.main.adapters.SongsAdapter
 import me.samuki.musicandspeed.activities.main.viewmodel.MainActivityViewModel
 import me.samuki.musicandspeed.base.BaseFragment
-import me.samuki.musicandspeed.extensions.toSongModelList
-import me.samuki.musicandspeed.services.media.MusicLibrary
 
 
 class SongsFragment : BaseFragment() {

@@ -1,5 +1,6 @@
 package me.samuki.musicandspeed.activities.listcreation.adapters
 
+import android.support.annotation.VisibleForTesting
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -51,7 +52,8 @@ class SongsListAdapter : RecyclerView.Adapter<SongsListAdapter.ListViewHolder>()
         holder.bindView(itemList[position]) {changeItemState(it)}
     }
 
-    private fun changeItemState(wrappedItem: WrappedListItem) {
+    @VisibleForTesting
+    fun changeItemState(wrappedItem: WrappedListItem) {
         val chosen = wrappedItem.chosen.not()
         val newList = itemList.toMutableList()
         newList.remove(wrappedItem)
@@ -73,7 +75,8 @@ class SongsListAdapter : RecyclerView.Adapter<SongsListAdapter.ListViewHolder>()
         itemList = newList
     }
 
-    private fun manageHeader(list: MutableList<WrappedListItem>, stringRes: Int, chosen: Boolean): List<WrappedListItem> {
+    @VisibleForTesting
+    fun manageHeader(list: MutableList<WrappedListItem>, stringRes: Int, chosen: Boolean): List<WrappedListItem> {
         if (list.isNotEmpty()) {
             list.firstOrNull { it.item is HeaderModel }?.let {
                 if (list.size == 1)

@@ -19,4 +19,12 @@ class DatabaseModule {
             .allowMainThreadQueries()
             .build()
 
+    @AppScope
+    @Provides
+    fun provideListDao(db: AppDatabase) = db.getListDao()
+
+    @AppScope
+    @Provides
+    fun provideIntervalDao(db: AppDatabase) = db.getIntervalDao()
+
 }

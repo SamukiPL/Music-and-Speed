@@ -71,11 +71,11 @@ class CreationSummaryFragment: BaseFragment() {
     private val summaryListener = object : SummaryListAdapter.SummaryListener {
 
         override fun addNewInterval() {
-            TODO("Łukasz weź się do roboty!")
+            vm?.createNewInterval()
         }
 
         override fun goToInterval(interval: IntervalModel) {
-            TODO("Łukasz weź się do roboty!")
+            vm?.editInterval(interval)
         }
 
     }

@@ -1,11 +1,13 @@
 package me.samuki.musicandspeed.dagger
 
+import android.app.Application
 import android.content.ContentResolver
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.support.AndroidSupportInjectionModule
 import me.samuki.musicandspeed.MusicApp
 import me.samuki.musicandspeed.dagger.modules.ActivitiesBindingModule
+import me.samuki.musicandspeed.dagger.modules.DatabaseModule
 import me.samuki.musicandspeed.dagger.modules.FragmentsBindingModule
 import me.samuki.musicandspeed.dagger.modules.UtilitiesModule
 import me.samuki.musicandspeed.dagger.scopes.AppScope
@@ -15,7 +17,8 @@ import me.samuki.musicandspeed.dagger.scopes.AppScope
     AndroidSupportInjectionModule::class,
     ActivitiesBindingModule::class,
     FragmentsBindingModule::class,
-    UtilitiesModule::class
+    UtilitiesModule::class,
+    DatabaseModule::class
 ])
 interface AppComponent {
 
@@ -26,7 +29,10 @@ interface AppComponent {
         fun build(): AppComponent
 
         @BindsInstance
-        fun contentResolver(contentResolver: ContentResolver): Builder
+        fun setContentResolver(contentResolver: ContentResolver): Builder
+
+        @BindsInstance
+        fun setApplication(app: Application): Builder
     }
 
 }

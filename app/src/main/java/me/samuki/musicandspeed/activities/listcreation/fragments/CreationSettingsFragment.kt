@@ -1,6 +1,8 @@
 package me.samuki.musicandspeed.activities.listcreation.fragments
 
+import android.app.AlertDialog
 import android.arch.lifecycle.Observer
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +19,11 @@ import me.samuki.musicandspeed.extensions.onClick
 
 class CreationSettingsFragment : BaseFragment() {
 
+    private var defaultSongsSelection: Boolean = false
+    private var speedsList: List<Int> = emptyList()
+
+    private var firstSpeed: Int = 0
+
     private val vm by lazy {
         provideActivityViewModel<ListCreationActivity, ListCreationViewModel>()
     }
@@ -32,7 +39,22 @@ class CreationSettingsFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
+        vm?.defaultSongsSelection?.observe(this, Observer { settings ->
+            settings?.let {
+                defaultSongsSelection = it.speed == -1
+                if (defaultSongsSelection)
+                    speedContainer.visibility = View.GONE
 
+                volumeBar.progress = it.volume
+                speedBar.progress = it.speed
+                firstSpeed = it.speed
+            }
+        })
+        vm?.createdIntervals?.observe(this, Observer { intervals ->
+            intervals?.let {
+                speedsList = it.map { interval -> interval.intervalSpeed }
+            }
+        })
     }
 
     private fun initViews() {
@@ -84,9 +106,29 @@ class CreationSettingsFragment : BaseFragment() {
             buttonIcon = R.drawable.baseline_done_black_48
             showText = false
             onClick {
-                vm?.endSongSelection(volumeBar.progress, speedBar.progress)
+                val currentSpeed = if (defaultSongsSelection) -1 else speedBar.progress
+                if (vm?.intervalIsEditing() == false && speedsList.contains(currentSpeed) ||
+                        vm?.intervalIsEditing() == true && firstSpeed != currentSpeed && speedsList.contains(currentSpeed)) {
+                    showDialogBeforeCompletion(currentSpeed)
+                } else {
+                    vm?.endSongSelection(volumeBar.progress, currentSpeed)
+                }
             }
         }
+    }
+
+    private fun showDialogBeforeCompletion(currentSpeed: Int) {
+        AlertDialog.Builder(context)
+                .setMessage(R.string.intervalAddingDialogMessage)
+                .setPositiveButton(R.string.connectIntervals) { _, _ ->
+                    vm?.connectIntervals(volumeBar.progress, currentSpeed)
+                }
+                .setNeutralButton(R.string.replaceInterval) { _, _ ->
+                    vm?.endSongSelection(volumeBar.progress, currentSpeed)
+                }
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                    dialog.dismiss()
+                }
     }
 
 }

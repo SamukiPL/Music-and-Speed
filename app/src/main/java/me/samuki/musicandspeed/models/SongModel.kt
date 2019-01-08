@@ -5,6 +5,8 @@ import android.net.Uri
 
 data class SongModel(
 
+        var id: String,
+
         var name: String,
 
         var artist: String,
