@@ -2,7 +2,9 @@ package me.samuki.musicandspeed.models
 
 
 data class MusicListModel (
-        val name: String
+        val id: Long,
+        val name: String,
+        val chosen: Boolean
 ) : ListModel {
 
     override fun getDiff() = name

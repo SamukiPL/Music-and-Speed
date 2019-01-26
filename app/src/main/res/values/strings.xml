@@ -49,6 +49,8 @@
         <item quantity="other">Interval with %1$d songs</item>
     </plurals>
 
+    <string name="setListsName">Set name for your new list</string>
+    <string name="listName">List name</string>
     <string name="chosenSongsHeader">Chosen songs</string>
     <string name="otherSongsHeader">Other songs</string>
     <string name="done">Done</string>

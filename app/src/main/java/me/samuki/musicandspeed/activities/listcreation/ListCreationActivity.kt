@@ -9,6 +9,7 @@ import me.samuki.musicandspeed.activities.listcreation.fragments.CreationSongsLi
 import me.samuki.musicandspeed.activities.listcreation.fragments.CreationSummaryFragment
 import me.samuki.musicandspeed.activities.listcreation.viewmodel.ListCreationViewModel
 import me.samuki.musicandspeed.base.BaseActivity
+import me.samuki.musicandspeed.utility.BundleConstants
 
 
 class ListCreationActivity : BaseActivity(true) {
@@ -24,6 +25,7 @@ class ListCreationActivity : BaseActivity(true) {
 
     override fun onStart() {
         super.onStart()
+        vm.listName = intent.getStringExtra(BundleConstants.LIST_NAME)
         vm.getSongs()
         vm.currentFragment.observe(this, Observer { currentFragment ->
             currentFragment?.let {
@@ -34,21 +36,22 @@ class ListCreationActivity : BaseActivity(true) {
 
     private fun setFragment(currentFragment: CreationFragments) {
         supportFragmentManager.popBackStack()
-        supportFragmentManager.beginTransaction().let {
-            val fragment = when(currentFragment) {
+        supportFragmentManager.beginTransaction().let { transaction ->
+            actionButton.hide()
+            when(currentFragment) {
                 CreationFragments.LIST_FRAGMENT -> CreationSongsListFragment()
                 CreationFragments.SUMMARY_FRAGMENT -> CreationSummaryFragment()
                 CreationFragments.SETTINGS_FRAGMENT -> CreationSettingsFragment()
-            }
-            actionButton.hide()
-            it.replace(R.id.creationFragment, fragment)
-            it.addToBackStack(null)
-            it.commit()
+                CreationFragments.END_CREATION -> null
+            }?.let {
+                transaction.replace(R.id.creationFragment, it)
+            } ?: finish()
+            transaction.commit()
             actionButton.show()
         }
     }
 
     enum class CreationFragments{
-        LIST_FRAGMENT, SUMMARY_FRAGMENT, SETTINGS_FRAGMENT
+        LIST_FRAGMENT, SUMMARY_FRAGMENT, SETTINGS_FRAGMENT, END_CREATION
     }
 }

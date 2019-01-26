@@ -11,7 +11,7 @@ import android.arch.persistence.room.Relation
 data class ListEntity(
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "list_id")
-        val id: Int,
+        val id: Long,
 
         @ColumnInfo(name = "list_name")
         val name: String

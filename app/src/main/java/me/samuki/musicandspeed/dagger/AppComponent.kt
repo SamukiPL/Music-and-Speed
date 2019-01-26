@@ -6,10 +6,7 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.support.AndroidSupportInjectionModule
 import me.samuki.musicandspeed.MusicApp
-import me.samuki.musicandspeed.dagger.modules.ActivitiesBindingModule
-import me.samuki.musicandspeed.dagger.modules.DatabaseModule
-import me.samuki.musicandspeed.dagger.modules.FragmentsBindingModule
-import me.samuki.musicandspeed.dagger.modules.UtilitiesModule
+import me.samuki.musicandspeed.dagger.modules.*
 import me.samuki.musicandspeed.dagger.scopes.AppScope
 
 @AppScope

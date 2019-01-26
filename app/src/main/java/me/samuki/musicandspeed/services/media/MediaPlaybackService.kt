@@ -7,9 +7,9 @@ import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 
-private const val MY_MEDIA_LOG_TAG = "Media Browser"
+private const val MY_MEDIA_LOG_TAG = "Initial Speed"
 
-class CustomBrowserService : MediaBrowserServiceCompat() {
+class MediaPlaybackService : MediaBrowserServiceCompat() {
 
     private var mediaSession: MediaSessionCompat? = null
     private lateinit var stateBuilder: PlaybackStateCompat.Builder

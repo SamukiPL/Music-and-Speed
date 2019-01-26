@@ -27,7 +27,7 @@
 //
 //public class NewListActivity extends AppCompatActivity {
 //
-//    private String listName;
+//    private String LIST_NAME;
 //    private int speed;
 //
 //    @Override
@@ -38,14 +38,14 @@
 //        if(savedInstanceState == null) {
 //            Bundle extras = getIntent().getExtras();
 //            if(extras == null) {
-//                listName = "";
+//                LIST_NAME = "";
 //                speed = 0;
 //            } else {
-//                listName = extras.getString(MusicDbAdapter.KEY_NAME);
+//                LIST_NAME = extras.getString(MusicDbAdapter.KEY_NAME);
 //                speed = extras.getInt(MusicDbAdapter.KEY_SPEED);
 //            }
 //        } else {
-//            listName = (String) savedInstanceState.getSerializable(MusicDbAdapter.KEY_NAME);
+//            LIST_NAME = (String) savedInstanceState.getSerializable(MusicDbAdapter.KEY_NAME);
 //            speed = (int) savedInstanceState.getSerializable(MusicDbAdapter.KEY_SPEED);
 //        }
 //
@@ -54,13 +54,13 @@
 //        setSpeed(speed);
 //
 //        EditText listNameEditText = (EditText) findViewById(R.id.settings_newListName);
-//        listNameEditText.setText(listName);
+//        listNameEditText.setText(LIST_NAME);
 //        setValidationForEditText(listNameEditText);
 //    }
 //
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
-//        if(listName.equals(""))
+//        if(LIST_NAME.equals(""))
 //            getMenuInflater().inflate(R.menu.new_list_menu, menu);
 //        else
 //            getMenuInflater().inflate(R.menu.edit_list_menu, menu);
@@ -86,8 +86,8 @@
 //                    dbAdapter.open();
 //                    if (dbAdapter.isNameExist(newListName)) {
 //                        //Trzeba dodać alert sprawdzający pewność użytkownika.
-//                        dbAdapter.dropTable(listName);
-//                        dbAdapter.deleteTableName(listName);
+//                        dbAdapter.dropTable(LIST_NAME);
+//                        dbAdapter.deleteTableName(LIST_NAME);
 //                    }
 //                    dbAdapter.insertTableName(newListName, speed);
 //                    dbAdapter.createTable(newListName);
@@ -112,8 +112,8 @@
 //                (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
 //        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
 //        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-//        if(listName.equals("")) toolbar.setTitle(R.string.newList);
-//            else  toolbar.setTitle(listName);
+//        if(LIST_NAME.equals("")) toolbar.setTitle(R.string.newListCanBeCreated);
+//            else  toolbar.setTitle(LIST_NAME);
 //        setSupportActionBar(toolbar);
 //        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -130,10 +130,10 @@
 //        MusicDbAdapter dbAdapter = null;
 //        int count = 0;
 //
-//        if(!listName.equals("")) {
+//        if(!LIST_NAME.equals("")) {
 //            dbAdapter = new MusicDbAdapter(this);
 //            dbAdapter.open();
-//            songsInTheList = dbAdapter.getAllSongs(listName);
+//            songsInTheList = dbAdapter.getAllSongs(LIST_NAME);
 //            songsInTheList.moveToFirst();
 //            count = songsInTheList.getCount();
 //        }

@@ -31,7 +31,7 @@ class MusicLibrary @Inject constructor(
             provideAllSongs()
         )
 
-    private fun provideAllSongs(): List<LibraryModel> {
+    fun provideAllSongs(): List<LibraryModel> {
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val selection = MediaStore.Audio.Media.IS_MUSIC + "!=0"
         val sortOrder = MediaStore.Audio.Media.TITLE + " ASC"
@@ -53,7 +53,7 @@ class MusicLibrary @Inject constructor(
                     songsList.add(
                             LibraryModel (
                                 metadata,
-                                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                                cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)),
                                 albumCoverUri
                         )
                     )
@@ -88,7 +88,7 @@ class MusicLibrary @Inject constructor(
 
     data class LibraryModel(
             val metadata: MediaMetadataCompat,
-            val musicUri: Uri,
+            val musicUri: String,
             val albumArtUri: Uri
     )
 

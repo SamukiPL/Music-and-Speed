@@ -63,7 +63,7 @@ class CreationSummaryFragment: BaseFragment() {
             buttonIcon = R.drawable.baseline_done_black_48
             showText = false
             onClick {
-//                vm?.endSongSelection(volumeBar.progress, speedBar.progress)
+                vm?.endCreation()
             }
         }
     }

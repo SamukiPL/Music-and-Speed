@@ -10,7 +10,9 @@ import me.samuki.musicandspeed.models.SongModel
 import kotlin.properties.Delegates
 
 
-class SongsAdapter : RecyclerView.Adapter<SongViewHolder>(), AutoUpdatableAdapter {
+class SongsAdapter(
+        private val listener: Listener
+) : RecyclerView.Adapter<SongViewHolder>(), AutoUpdatableAdapter {
 
     var itemList: List<SongModel> by Delegates.observable(listOf()) { _, oldValue, newValue ->
         autoNotifyList(oldValue, newValue) { old, new ->
@@ -26,7 +28,11 @@ class SongsAdapter : RecyclerView.Adapter<SongViewHolder>(), AutoUpdatableAdapte
     override fun getItemCount() = itemList.size
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        holder.bindView(itemList[position])
+        holder.bindView(itemList[position], listener)
+    }
+
+    interface Listener {
+        fun playSong(songId: String)
     }
 
 }

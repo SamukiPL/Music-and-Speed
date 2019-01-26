@@ -55,7 +55,7 @@
 //                (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
 //        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
 //        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-//        toolbar.setTitle(getString(R.string.newList));
+//        toolbar.setTitle(getString(R.string.newListCanBeCreated));
 //        setSupportActionBar(toolbar);
 //        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 //            @Override

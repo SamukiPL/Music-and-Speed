@@ -1,9 +1,8 @@
 package me.samuki.musicandspeed.database.daos
 
-import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import me.samuki.musicandspeed.database.entities.IntervalEntity
-import me.samuki.musicandspeed.extensions.toSongSeed
+import me.samuki.musicandspeed.extensions.songsToJson
 import me.samuki.musicandspeed.models.IntervalModel
 
 @Dao
@@ -34,7 +33,7 @@ abstract class IntervalDao {
 
     @Transaction
     open fun insertInterval(interval: IntervalModel, listId: Long): Boolean {
-        val songsSeed = interval.songs.toSongSeed()
+        val songsSeed = interval.songs.songsToJson()
         val isExisting = isIntervalExisting(interval.intervalSpeed, songsSeed, listId) != null
 
         return if (isExisting) {

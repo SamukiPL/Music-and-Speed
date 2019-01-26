@@ -1,6 +1,7 @@
 package me.samuki.musicandspeed.database.daos
 
 import android.arch.persistence.room.*
+import io.reactivex.Flowable
 import me.samuki.musicandspeed.database.entities.ListEntity
 import me.samuki.musicandspeed.models.IntervalModel
 
@@ -24,6 +25,11 @@ abstract class ListDao {
         SELECT * FROM lists
     """)
     abstract fun getAllLists(): List<ListEntity>
+
+    @Query("""
+        SELECT * FROM lists
+    """)
+    abstract fun getAllListsRx(): Flowable<List<ListEntity>>
 
     @Update
     abstract fun updateList(list: ListEntity)

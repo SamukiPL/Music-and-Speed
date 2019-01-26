@@ -26,7 +26,6 @@
 //import java.io.IOException;
 //import java.util.List;
 //
-//import static me.samuki.musicandspeed.MainActivity.DEBUG_TAG;
 //
 //public class MusicService extends Service {
 //    private final IBinder mBinder = new LocalBinder();
@@ -260,11 +259,11 @@
 //        int actualMusicPlayed = 0;
 //        try {
 //            if(trackId >= 0) {
-//                playerManager.playMusic(trackId, false);
+//                playerManager.startMusic(trackId, false);
 //                actualMusicPlayed = trackId;
 //            }
 //            else {
-//                playerManager.playMusic();
+//                playerManager.startMusic();
 //                actualMusicPlayed = playerManager.getActualMusicPlaying();
 //            }
 //            playerManager.firstServicePlay = false;

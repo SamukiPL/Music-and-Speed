@@ -17,7 +17,11 @@ import me.samuki.musicandspeed.base.BaseFragment
 class SongsFragment : BaseFragment() {
 
     private val songsAdapter by lazy {
-        SongsAdapter()
+        SongsAdapter(object : SongsAdapter.Listener {
+            override fun playSong(songId: String) {
+                (activity as? MainActivity)?.startMusicService(songId)
+            }
+        })
     }
 
     private val vm by lazy {

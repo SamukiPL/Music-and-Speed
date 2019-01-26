@@ -15,7 +15,7 @@ data class SongModel(
 
         var albumArtPath: Uri,
 
-        var path: Uri,
+        var path: String,
 
         var albumCover: String,
 

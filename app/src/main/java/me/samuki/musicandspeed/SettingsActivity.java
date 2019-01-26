@@ -97,7 +97,7 @@
 //        dbAdapter.close();
 //    }
 //
-//    public void newList(View view) {
+//    public void newListCanBeCreated(View view) {
 //        Intent intent = new Intent(this, NewListActivity.class);
 //        intent.putExtra(MusicDbAdapter.KEY_NAME, "");
 //        startActivity(intent);
@@ -109,11 +109,11 @@
 //        startActivity(intent);
 //    }
 //
-//    public void deleteList(String listName, LinearLayout listNameContainer) {
+//    public void deleteList(String LIST_NAME, LinearLayout listNameContainer) {
 //        MusicDbAdapter dbAdapter = new MusicDbAdapter(this);
 //        dbAdapter.open();
-//        dbAdapter.deleteTableName(listName);
-//        dbAdapter.dropTable(listName);
+//        dbAdapter.deleteTableName(LIST_NAME);
+//        dbAdapter.dropTable(LIST_NAME);
 //        dbAdapter.close();
 //        listNameContainer.setVisibility(View.GONE);
 //    }

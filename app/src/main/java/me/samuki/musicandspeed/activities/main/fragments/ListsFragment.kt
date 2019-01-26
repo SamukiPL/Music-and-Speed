@@ -1,5 +1,6 @@
 package me.samuki.musicandspeed.activities.main.fragments
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Build
@@ -29,7 +30,11 @@ class ListsFragment : BaseFragment() {
     }
 
     private val listsAdapter by lazy {
-        ListsAdapter()
+        ListsAdapter(object : ListsAdapter.Listener {
+            override fun setListAsChosen(listId: Long) {
+                vm?.setCurrentlyChosenList(listId)
+            }
+        })
     }
 
     private val linearLayoutManager = LinearLayoutManager(context)
@@ -44,9 +49,17 @@ class ListsFragment : BaseFragment() {
         initViews()
     }
 
+    override fun onStart() {
+        super.onStart()
+        vm?.musicLists?.observe(this, Observer { lists ->
+            lists?.let {
+                listsAdapter.itemList = it
+            }
+        })
+    }
+
     private fun initViews() {
         initRecyclerView()
-        initActionButton()
     }
 
     private fun initRecyclerView() {
@@ -63,22 +76,12 @@ class ListsFragment : BaseFragment() {
         }
     }
 
-    private fun initActionButton() {
-        activity?.actionButton?.apply {
-            buttonIcon = R.drawable.baseline_add_black_48
-            text = getString(R.string.create)
-            onClick {
-                startActivity(Intent(context, ListCreationActivity::class.java))
-            }
-        }
-    }
-
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             handler.removeCallbacksAndMessages(null)
             handler.postDelayed({
-                actionButton.showText = linearLayoutManager.findFirstVisibleItemPosition() == 0
+                actionButton?.showText = linearLayoutManager.findFirstVisibleItemPosition() == 0
             }, 100)
         }
     }
@@ -86,7 +89,7 @@ class ListsFragment : BaseFragment() {
     private fun onScrollChange() {
         handler.removeCallbacksAndMessages(null)
         handler.postDelayed({
-            actionButton.showText = linearLayoutManager.findFirstVisibleItemPosition() == 0
+            actionButton?.showText = linearLayoutManager.findFirstVisibleItemPosition() == 0
         }, 250)
     }
 

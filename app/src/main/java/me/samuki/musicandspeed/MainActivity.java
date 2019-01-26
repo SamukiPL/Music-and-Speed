@@ -87,13 +87,13 @@
 //            ImageButton button = (ImageButton) findViewById(R.id.playButton);
 //            musicService.setSpeedViewAndTitleViewAndPlayButton(speedView, titleView, button);
 //            if(!MusicService.playerManager.isPlaying && playNewSong) {
-//                playMusic(trackId);
+//                startMusic(trackId);
 //            } else {
 //                if(MusicService.playerManager.isPlaying) {
 //                    button.setContentDescription(getString(R.string.stop));
 //                    button.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
 //                }
-//                if (trackId >= 0) playMusic(trackId);
+//                if (trackId >= 0) startMusic(trackId);
 //            }
 //            MusicService.playerManager.setProgressBar((ProgressBar)findViewById(R.id.progressBar));
 //            //Tutaj musi być coś co ma się zrobić jeśli w tle cały czas działałą apka,
@@ -125,7 +125,7 @@
 //        startService(pauseIntent);
 //    }
 //
-//    public void playMusic(View view) {
+//    public void startMusic(View view) {
 //        ImageButton button = (ImageButton) view;
 //        if(button.getContentDescription().equals(getString(R.string.play))) {
 //            SharedPreferences prefs = this.getSharedPreferences(
@@ -146,7 +146,7 @@
 //        }
 //    }
 //
-//    public void playMusic(int trackId) {
+//    public void startMusic(int trackId) {
 //        ImageButton button = (ImageButton) findViewById(R.id.playButton);
 //
 //        startMusicService(trackId);

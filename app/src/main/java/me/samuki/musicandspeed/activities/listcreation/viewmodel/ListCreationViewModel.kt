@@ -33,6 +33,7 @@ class ListCreationViewModel @Inject constructor(
     private val currentlyChosenSongs = mutableListOf<WrappedListItem>()
     private var chooseFromAllSongs = true
     private var editedInterval: IntervalModel? = null
+    var listName: String = ""
 
     private val _defaultSongsSelection = MutableLiveData<IntervalSettings>().apply {
         value = IntervalSettings(50, -1)
@@ -151,6 +152,16 @@ class ListCreationViewModel @Inject constructor(
         _defaultSongsSelection.postValue(
                 IntervalSettings(interval.volume, interval.intervalSpeed)
         )
+    }
+
+    fun endCreation() {
+        val listId = listDao.insertList(listName)
+        createdIntervals.value?.let { list ->
+            list.forEach {
+                intervalDao.insertInterval(it, listId)
+            }
+        }
+        _currentFragment.postValue(ListCreationActivity.CreationFragments.END_CREATION)
     }
 
     fun intervalIsEditing(): Boolean {

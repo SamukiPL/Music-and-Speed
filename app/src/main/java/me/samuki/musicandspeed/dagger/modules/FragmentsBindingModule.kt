@@ -10,6 +10,7 @@ import me.samuki.musicandspeed.activities.main.fragments.SongsFragment
 import me.samuki.musicandspeed.dagger.modules.binds.ListCreationActivityModule
 import me.samuki.musicandspeed.dagger.modules.binds.MainActivityModule
 import me.samuki.musicandspeed.dagger.scopes.ActivityScope
+import me.samuki.musicandspeed.dialog.ListNameDialogFragment
 
 @Module
 abstract class FragmentsBindingModule {
@@ -21,6 +22,10 @@ abstract class FragmentsBindingModule {
     @ContributesAndroidInjector(modules = [MainActivityModule::class])
     @ActivityScope
     abstract fun provideListsFragment() : ListsFragment
+
+    @ContributesAndroidInjector(modules = [MainActivityModule::class])
+    @ActivityScope
+    abstract fun provideListNameDialogFragment() : ListNameDialogFragment
 
     @ContributesAndroidInjector(modules = [ListCreationActivityModule::class])
     @ActivityScope

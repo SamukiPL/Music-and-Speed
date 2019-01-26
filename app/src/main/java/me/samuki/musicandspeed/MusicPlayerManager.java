@@ -74,7 +74,7 @@
 //        firstServicePlay = true;
 //    }
 //
-//    void playMusic() throws IOException  {
+//    void startMusic() throws IOException  {
 //        Random random = new Random(); //AccessFile
 //        int listIndex = random.nextInt(slowDrivingSongs.size());
 //        int playThatOne = slowDrivingSongs.get(listIndex);
@@ -88,7 +88,7 @@
 //        prepareProgressBar(path);
 //    }
 //
-//    void playMusic(int whichMusic, boolean previous) throws IOException {
+//    void startMusic(int whichMusic, boolean previous) throws IOException {
 //        stopMusic();
 //        String path = audioPaths.get(whichMusic);
 //        mediaPlayer.setDataSource(path);
@@ -133,7 +133,7 @@
 //        actualMusicPlaying = playThatOne;
 //        if (isPlaying) {
 //            durationTimer.cancel();
-//            playMusic(playThatOne, false);
+//            startMusic(playThatOne, false);
 //        } else progressBar.setProgress(0);
 //    }
 //
@@ -168,7 +168,7 @@
 //        }
 //        else {
 //            try {
-//                playMusic(actualMusicPlaying, false);
+//                startMusic(actualMusicPlaying, false);
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
@@ -186,7 +186,7 @@
 //                    playLastMusic();
 //                else
 //                    actualMusicPlaying = getLastOnePlayed();
-//            } else if(isPlaying) playMusic(actualMusicPlaying, true);
+//            } else if(isPlaying) startMusic(actualMusicPlaying, true);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }

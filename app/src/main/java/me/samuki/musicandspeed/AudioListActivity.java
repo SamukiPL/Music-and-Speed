@@ -263,7 +263,7 @@
 //        startService(pauseIntent);
 //    }
 //
-//    public void playMusic(View view) {
+//    public void startMusic(View view) {
 //        ImageButton button = (ImageButton) view;
 //        if(button.getContentDescription().equals(getString(R.string.play))) {
 //            restartMusicService();
